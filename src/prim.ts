@@ -28,16 +28,13 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
   const maxWaitRef = useRef(options.maxWait);
 
   const isUnmountedRef = useRef<boolean>(false);
-  useEffect(
-    () => () => {
-      isUnmountedRef.current = true;
-    },
-    []
-  );
 
   const stateRef = useRef<DebouncedPrimState<T>>({ type: "standby" });
 
   const flushRef = useRef((): void => {
+    if (isUnmountedRef.current) {
+      return;
+    }
     // eslint-disable-next-line default-case
     switch (stateRef.current.type) {
       case "standby":
@@ -49,16 +46,17 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
           clearTimeout(maxWaitTimerId);
         }
         stateRef.current = { type: "standby" };
-        if (!isUnmountedRef.current) {
-          const trailingCallback = trailingCallbackRef.current;
-          trailingCallback(args, count);
-        }
+        const trailingCallback = trailingCallbackRef.current;
+        trailingCallback(args, count);
         break;
       }
     }
   });
 
   const debouncedFunc = useRef((...args: T): void => {
+    if (isUnmountedRef.current) {
+      return;
+    }
     // eslint-disable-next-line default-case
     switch (stateRef.current.type) {
       case "standby": {
@@ -68,10 +66,8 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
             ? setTimeout(flushRef.current, maxWaitRef.current)
             : undefined;
         stateRef.current = { type: "waiting", timerId, maxWaitTimerId, args, count: 0 };
-        if (!isUnmountedRef.current) {
-          const leadingCallback = leadingCallbackRef.current;
-          leadingCallback(args);
-        }
+        const leadingCallback = leadingCallbackRef.current;
+        leadingCallback(args);
         break;
       }
       case "waiting": {
@@ -85,6 +81,9 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
   });
 
   const cancelRef = useRef((): void => {
+    if (isUnmountedRef.current) {
+      return;
+    }
     // eslint-disable-next-line default-case
     switch (stateRef.current.type) {
       case "standby":
@@ -100,6 +99,26 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
       }
     }
   });
+
+  useEffect(
+    () => () => {
+      isUnmountedRef.current = true;
+      // eslint-disable-next-line default-case
+      switch (stateRef.current.type) {
+        case "standby":
+          break;
+        case "waiting": {
+          const { timerId, maxWaitTimerId } = stateRef.current;
+          clearTimeout(timerId);
+          if (maxWaitTimerId !== undefined) {
+            clearTimeout(maxWaitTimerId);
+          }
+          break;
+        }
+      }
+    },
+    []
+  );
 
   return [debouncedFunc.current, cancelRef.current, flushRef.current];
 }
