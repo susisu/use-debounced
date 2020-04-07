@@ -1,0 +1,41 @@
+{
+  "name": "@susisu/use-debounced",
+  "version": "0.0.0",
+  "description": "Debounced React Hooks",
+  "repository": "https://github.com/susisu/use-debounced.git",
+  "author": "Susisu <susisu2413@yahoo.co.jp>",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "lint": "eslint --ext .js,.ts '*.js' src",
+    "lint-fix": "eslint --fix --ext .js,.ts '*.js' src",
+    "test": "jest",
+    "build": "tsc --build tsconfig.build.json",
+    "clean": "run-s clean:build clean:rm",
+    "clean:build": "tsc --build tsconfig.build.json --clean",
+    "clean:rm": "rimraf lib",
+    "prepublishOnly": "run-s clean lint test build"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@susisu/eslint-config": "^0.0.19",
+    "@testing-library/react-hooks": "^3.2.1",
+    "@types/jest": "^25.2.1",
+    "@types/react": "^16.9.32",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-jest-formatting": "^1.2.0",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "jest": "^25.2.7",
+    "npm-run-all": "^4.1.5",
+    "react": "^16.13.1",
+    "react-test-renderer": "^16.13.1",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.8.3"
+  }
+}
