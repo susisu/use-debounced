@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useDebouncedPrim } from "./prim";
 
-type UseDebouncedStateOptions<T> = Readonly<{
+export type UseDebouncedStateOptions<T> = Readonly<{
   init: T | (() => T);
   wait: number;
   maxWait?: number;
@@ -9,7 +9,7 @@ type UseDebouncedStateOptions<T> = Readonly<{
   trailing?: boolean;
 }>;
 
-type UseDebouncedStateResult<T> = [
+export type UseDebouncedStateResult<T> = [
   T,
   (state: T) => void,
   boolean,

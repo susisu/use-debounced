@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-type UseDebouncedPrimOptions<T> = Readonly<{
+export type UseDebouncedPrimOptions<T> = Readonly<{
   triggerCallback: () => void;
   leadingCallback: (args: T) => void;
   trailingCallback: (args: T, count: number) => void;
@@ -8,6 +8,12 @@ type UseDebouncedPrimOptions<T> = Readonly<{
   wait: number;
   maxWait?: number;
 }>;
+
+export type UseDebouncedPrimResult<T extends readonly unknown[]> = {
+  trigger: (...args: T) => void;
+  cancel: () => void;
+  flush: () => void;
+};
 
 type DebouncedPrimState<T> =
   | Readonly<{ type: "standby" }>
@@ -18,12 +24,6 @@ type DebouncedPrimState<T> =
       args: T;
       count: number;
     }>;
-
-type UseDebouncedPrimResult<T extends readonly unknown[]> = {
-  trigger: (...args: T) => void;
-  cancel: () => void;
-  flush: () => void;
-};
 
 export function useDebouncedPrim<T extends readonly unknown[]>(
   options: UseDebouncedPrimOptions<T>

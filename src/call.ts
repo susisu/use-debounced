@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useDebouncedPrim } from "./prim";
 
-type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
+export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => R;
   init: R | (() => R);
   wait: number;
@@ -10,7 +10,7 @@ type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
   trailing?: boolean;
 }>;
 
-type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
+export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
   R,
   (...args: T) => void,
   boolean,

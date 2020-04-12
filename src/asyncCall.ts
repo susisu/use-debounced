@@ -2,7 +2,7 @@ import { useRef, useReducer, Reducer, useEffect } from "react";
 import { attachActions, CancelFunc } from "@susisu/promise-utils";
 import { useDebouncedPrim } from "./prim";
 
-type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
+export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => Promise<R>;
   init: R | (() => R);
   wait: number;
@@ -11,7 +11,7 @@ type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
   trailing?: boolean;
 }>;
 
-type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
+export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
   R,
   (...args: T) => void,
   boolean,
