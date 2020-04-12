@@ -558,6 +558,47 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(false);
   });
 
+  it("should cancel the pending function call when the component is unmounted", () => {
+    const { func, resolves } = createMockFunc();
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
+    );
+    expect(func).not.toHaveBeenCalled();
+    const [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
+
+    act(() => {
+      call("foo");
+    });
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("foo");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    t.unmount();
+
+    resolves[0]("FOO"); // should not update the state
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+  });
+
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
       const { func } = createMockFunc();

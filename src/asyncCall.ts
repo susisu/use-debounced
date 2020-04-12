@@ -266,6 +266,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
         const cancelAsyncCall = cancelAsyncCallRef.current;
         cancelAsyncCall();
         cancelAsyncCallRef.current = undefined;
+        prevArgsRef.current = undefined;
       }
     },
     []
