@@ -58,46 +58,47 @@ describe("useDebouncedState", () => {
         wait: 1000,
       })
     );
-    const [state1, setState, isWaiting1] = t.result.current;
-    expect(state1).toBe("");
-    expect(isWaiting1).toBe(false);
+    const [, setState] = t.result.current;
+    let [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       setState("foo");
     });
-    const [state2, , isWaiting2] = t.result.current;
-    expect(state2).toBe("");
-    expect(isWaiting2).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       setState("bar");
     });
-    const [state3, , isWaiting3] = t.result.current;
-    expect(state3).toBe("");
-    expect(isWaiting3).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       setState("baz");
     });
-    const [state4, , isWaiting4] = t.result.current;
-    expect(state4).toBe("");
-    expect(isWaiting4).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [state5, , isWaiting5] = t.result.current;
-    expect(state5).toBe("");
-    expect(isWaiting5).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [state6, , isWaiting6] = t.result.current;
-    expect(state6).toBe("baz");
-    expect(isWaiting6).toBe(false);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("baz");
+    expect(isWaiting).toBe(false);
   });
 
   it("should update the state on the leading edge of timeout if leading = true is specified", () => {
@@ -108,46 +109,47 @@ describe("useDebouncedState", () => {
         leading: true,
       })
     );
-    const [state1, setState, isWaiting1] = t.result.current;
-    expect(state1).toBe("");
-    expect(isWaiting1).toBe(false);
+    const [, setState] = t.result.current;
+    let [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       setState("foo");
     });
-    const [state2, , isWaiting2] = t.result.current;
-    expect(state2).toBe("foo");
-    expect(isWaiting2).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       setState("bar");
     });
-    const [state3, , isWaiting3] = t.result.current;
-    expect(state3).toBe("foo");
-    expect(isWaiting3).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       setState("baz");
     });
-    const [state4, , isWaiting4] = t.result.current;
-    expect(state4).toBe("foo");
-    expect(isWaiting4).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [state5, , isWaiting5] = t.result.current;
-    expect(state5).toBe("foo");
-    expect(isWaiting5).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [state6, , isWaiting6] = t.result.current;
-    expect(state6).toBe("baz");
-    expect(isWaiting6).toBe(false);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("baz");
+    expect(isWaiting).toBe(false);
   });
 
   it("should not update the state on the trailing edge of timeout if trailing = false is specified", () => {
@@ -159,46 +161,47 @@ describe("useDebouncedState", () => {
         trailing: false,
       })
     );
-    const [state1, setState, isWaiting1] = t.result.current;
-    expect(state1).toBe("");
-    expect(isWaiting1).toBe(false);
+    const [, setState] = t.result.current;
+    let [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       setState("foo");
     });
-    const [state2, , isWaiting2] = t.result.current;
-    expect(state2).toBe("foo");
-    expect(isWaiting2).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       setState("bar");
     });
-    const [state3, , isWaiting3] = t.result.current;
-    expect(state3).toBe("foo");
-    expect(isWaiting3).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       setState("baz");
     });
-    const [state4, , isWaiting4] = t.result.current;
-    expect(state4).toBe("foo");
-    expect(isWaiting4).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [state5, , isWaiting5] = t.result.current;
-    expect(state5).toBe("foo");
-    expect(isWaiting5).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [state6, , isWaiting6] = t.result.current;
-    expect(state6).toBe("foo");
-    expect(isWaiting6).toBe(false);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(false);
   });
 
   it("should correctly reset waiting state when leading = true and setState is invoked only once", () => {
@@ -209,23 +212,24 @@ describe("useDebouncedState", () => {
         leading: true,
       })
     );
-    const [state1, setState, isWaiting1] = t.result.current;
-    expect(state1).toBe("");
-    expect(isWaiting1).toBe(false);
+    const [, setState] = t.result.current;
+    let [state, , isWaiting] = t.result.current;
+    expect(state).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       setState("foo");
     });
-    const [state2, , isWaiting2] = t.result.current;
-    expect(state2).toBe("foo");
-    expect(isWaiting2).toBe(true);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(1000);
     });
-    const [state3, , isWaiting3] = t.result.current;
-    expect(state3).toBe("foo");
-    expect(isWaiting3).toBe(false);
+    [state, , isWaiting] = t.result.current;
+    expect(state).toBe("foo");
+    expect(isWaiting).toBe(false);
   });
 
   describe("cancel", () => {
@@ -236,23 +240,31 @@ describe("useDebouncedState", () => {
           wait: 1000,
         })
       );
-      const [state1, setState, isWaiting1, cancel] = t.result.current;
-      expect(state1).toBe("");
-      expect(isWaiting1).toBe(false);
+      const [, setState, , cancel] = t.result.current;
+      let [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(false);
 
       act(() => {
         setState("foo");
       });
-      const [state2, , isWaiting2] = t.result.current;
-      expect(state2).toBe("");
-      expect(isWaiting2).toBe(true);
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(true);
 
       act(() => {
         cancel();
       });
-      const [state3, , isWaiting3] = t.result.current;
-      expect(state3).toBe("");
-      expect(isWaiting3).toBe(false);
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(false);
     });
   });
 
@@ -264,23 +276,24 @@ describe("useDebouncedState", () => {
           wait: 1000,
         })
       );
-      const [state1, setState, isWaiting1, , flush] = t.result.current;
-      expect(state1).toBe("");
-      expect(isWaiting1).toBe(false);
+      const [, setState, , , flush] = t.result.current;
+      let [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(false);
 
       act(() => {
         setState("foo");
       });
-      const [state2, , isWaiting2] = t.result.current;
-      expect(state2).toBe("");
-      expect(isWaiting2).toBe(true);
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(true);
 
       act(() => {
         flush();
       });
-      const [state3, , isWaiting3] = t.result.current;
-      expect(state3).toBe("foo");
-      expect(isWaiting3).toBe(false);
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("foo");
+      expect(isWaiting).toBe(false);
     });
   });
 });

@@ -16,7 +16,7 @@ describe("useDebouncedCall", () => {
     const t = renderHook(() =>
       useDebouncedCall({
         func,
-        init: "foo",
+        init: "",
         wait: 1000,
       })
     );
@@ -52,8 +52,8 @@ describe("useDebouncedCall", () => {
         wait: 1000,
       })
     );
-    const [res] = t.result.current;
     expect(init).toHaveBeenCalled();
+    const [res] = t.result.current;
     expect(res).toBe("");
   });
 
@@ -66,46 +66,54 @@ describe("useDebouncedCall", () => {
         wait: 1000,
       })
     );
-    const [res1, call, isWaiting1] = t.result.current;
-    expect(res1).toBe("");
-    expect(isWaiting1).toBe(false);
+    expect(func).not.toHaveBeenCalled();
+    const [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       call("foo");
     });
-    const [res2, , isWaiting2] = t.result.current;
-    expect(res2).toBe("");
-    expect(isWaiting2).toBe(true);
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       call("bar");
     });
-    const [res3, , isWaiting3] = t.result.current;
-    expect(res3).toBe("");
-    expect(isWaiting3).toBe(true);
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       call("baz");
     });
-    const [res4, , isWaiting4] = t.result.current;
-    expect(res4).toBe("");
-    expect(isWaiting4).toBe(true);
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [res5, , isWaiting5] = t.result.current;
-    expect(res5).toBe("");
-    expect(isWaiting5).toBe(true);
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [res6, , isWaiting6] = t.result.current;
-    expect(res6).toBe("BAZ");
-    expect(isWaiting6).toBe(false);
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("baz");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("BAZ");
+    expect(isWaiting).toBe(false);
   });
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
@@ -118,46 +126,55 @@ describe("useDebouncedCall", () => {
         leading: true,
       })
     );
-    const [res1, call, isWaiting1] = t.result.current;
-    expect(res1).toBe("");
-    expect(isWaiting1).toBe(false);
+    expect(func).not.toHaveBeenCalled();
+    const [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       call("foo");
     });
-    const [res2, , isWaiting2] = t.result.current;
-    expect(res2).toBe("FOO");
-    expect(isWaiting2).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("foo");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       call("bar");
     });
-    const [res3, , isWaiting3] = t.result.current;
-    expect(res3).toBe("FOO");
-    expect(isWaiting3).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       call("baz");
     });
-    const [res4, , isWaiting4] = t.result.current;
-    expect(res4).toBe("FOO");
-    expect(isWaiting4).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [res5, , isWaiting5] = t.result.current;
-    expect(res5).toBe("FOO");
-    expect(isWaiting5).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [res6, , isWaiting6] = t.result.current;
-    expect(res6).toBe("BAZ");
-    expect(isWaiting6).toBe(false);
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenLastCalledWith("baz");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("BAZ");
+    expect(isWaiting).toBe(false);
   });
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
@@ -171,46 +188,54 @@ describe("useDebouncedCall", () => {
         trailing: false,
       })
     );
-    const [res1, call, isWaiting1] = t.result.current;
-    expect(res1).toBe("");
-    expect(isWaiting1).toBe(false);
+    expect(func).not.toHaveBeenCalled();
+    const [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       call("foo");
     });
-    const [res2, , isWaiting2] = t.result.current;
-    expect(res2).toBe("FOO");
-    expect(isWaiting2).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("foo");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       call("bar");
     });
-    const [res3, , isWaiting3] = t.result.current;
-    expect(res3).toBe("FOO");
-    expect(isWaiting3).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
       call("baz");
     });
-    const [res4, , isWaiting4] = t.result.current;
-    expect(res4).toBe("FOO");
-    expect(isWaiting4).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [res5, , isWaiting5] = t.result.current;
-    expect(res5).toBe("FOO");
-    expect(isWaiting5).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    const [res6, , isWaiting6] = t.result.current;
-    expect(res6).toBe("FOO");
-    expect(isWaiting6).toBe(false);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(false);
   });
 
   it("should correctly reset waiting state when leading = true and call is invoked only once", () => {
@@ -223,23 +248,28 @@ describe("useDebouncedCall", () => {
         leading: true,
       })
     );
-    const [res1, call, isWaiting1] = t.result.current;
-    expect(res1).toBe("");
-    expect(isWaiting1).toBe(false);
+    expect(func).not.toHaveBeenCalled();
+    const [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
 
     act(() => {
       call("foo");
     });
-    const [res2, , isWaiting2] = t.result.current;
-    expect(res2).toBe("FOO");
-    expect(isWaiting2).toBe(true);
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("foo");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(1000);
     });
-    const [res3, , isWaiting3] = t.result.current;
-    expect(res3).toBe("FOO");
-    expect(isWaiting3).toBe(false);
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(false);
   });
 
   describe("cancel", () => {
@@ -252,23 +282,35 @@ describe("useDebouncedCall", () => {
           wait: 1000,
         })
       );
-      const [res1, call, isWaiting1, cancel] = t.result.current;
-      expect(res1).toBe("");
-      expect(isWaiting1).toBe(false);
+      expect(func).not.toHaveBeenCalled();
+      const [, call, , cancel] = t.result.current;
+      let [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
 
       act(() => {
         call("foo");
       });
-      const [res2, , isWaiting2] = t.result.current;
-      expect(res2).toBe("");
-      expect(isWaiting2).toBe(true);
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
 
       act(() => {
         cancel();
       });
-      const [res3, , isWaiting3] = t.result.current;
-      expect(res3).toBe("");
-      expect(isWaiting3).toBe(false);
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
     });
   });
 
@@ -282,23 +324,28 @@ describe("useDebouncedCall", () => {
           wait: 1000,
         })
       );
-      const [res1, call, isWaiting1, , flush] = t.result.current;
-      expect(res1).toBe("");
-      expect(isWaiting1).toBe(false);
+      expect(func).not.toHaveBeenCalled();
+      const [, call, , , flush] = t.result.current;
+      let [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
 
       act(() => {
         call("foo");
       });
-      const [res2, , isWaiting2] = t.result.current;
-      expect(res2).toBe("");
-      expect(isWaiting2).toBe(true);
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
 
       act(() => {
         flush();
       });
-      const [res3, , isWaiting3] = t.result.current;
-      expect(res3).toBe("FOO");
-      expect(isWaiting3).toBe(false);
+      expect(func).toHaveBeenCalledTimes(1);
+      expect(func).toHaveBeenLastCalledWith("foo");
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("FOO");
+      expect(isWaiting).toBe(false);
     });
   });
 });
