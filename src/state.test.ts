@@ -14,7 +14,7 @@ describe("useDebouncedState", () => {
   it("should always return the identical functions", () => {
     const t = renderHook(() =>
       useDebouncedState({
-        init: 42,
+        init: "",
         wait: 1000,
       })
     );
@@ -30,16 +30,16 @@ describe("useDebouncedState", () => {
   it("should initialize the state with the given value", () => {
     const t = renderHook(() =>
       useDebouncedState({
-        init: 42,
+        init: "",
         wait: 1000,
       })
     );
     const [state] = t.result.current;
-    expect(state).toBe(42);
+    expect(state).toBe("");
   });
 
   it("should initialize the state using the given function", () => {
-    const init = jest.fn(() => 42);
+    const init = jest.fn<string, []>(() => "");
     const t = renderHook(() =>
       useDebouncedState({
         init,
@@ -48,7 +48,7 @@ describe("useDebouncedState", () => {
     );
     const [state] = t.result.current;
     expect(init).toHaveBeenCalled();
-    expect(state).toBe(42);
+    expect(state).toBe("");
   });
 
   it("should debounce state update", () => {
@@ -201,7 +201,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting6).toBe(false);
   });
 
-  it("should correctly reset waiting state when leading = true and setState is called only once", () => {
+  it("should correctly reset waiting state when leading = true and setState is invoked only once", () => {
     const t = renderHook(() =>
       useDebouncedState({
         init: "",
@@ -257,7 +257,7 @@ describe("useDebouncedState", () => {
   });
 
   describe("flush", () => {
-    it("should cancel the waiting state update", () => {
+    it("should flush the waiting state update", () => {
       const t = renderHook(() =>
         useDebouncedState({
           init: "",
