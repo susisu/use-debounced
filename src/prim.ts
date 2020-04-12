@@ -3,6 +3,7 @@ import { useRef, useEffect } from "react";
 type UseDebouncedPrimOptions<T> = Readonly<{
   leadingCallback: (args: T) => void;
   trailingCallback: (args: T, count: number) => void;
+  cancelCallback: () => void;
   wait: number;
   maxWait?: number;
 }>;
@@ -24,6 +25,8 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
   leadingCallbackRef.current = options.leadingCallback;
   const trailingCallbackRef = useRef(options.trailingCallback);
   trailingCallbackRef.current = options.trailingCallback;
+  const cancelCallbackRef = useRef(options.cancelCallback);
+  cancelCallbackRef.current = options.cancelCallback;
   const waitRef = useRef(options.wait);
   const maxWaitRef = useRef(options.maxWait);
 
@@ -95,6 +98,8 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
           clearTimeout(maxWaitTimerId);
         }
         stateRef.current = { type: "standby" };
+        const cancelCallback = cancelCallbackRef.current;
+        cancelCallback();
         break;
       }
     }
