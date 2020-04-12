@@ -1,4 +1,4 @@
-## 0.1.1 (yyyy-mm-dd)
+## 0.1.1 (2020-04-12)
 ### Features
 - Log errors to console when promise rejection happened in `useDebouncedAsyncCall`
 
