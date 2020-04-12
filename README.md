@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/susisu/use-debounced.svg?branch=master)](https://travis-ci.com/susisu/use-debounced)
 
+Debounced React Hooks
+
 ``` shell
 npm i @susisu/use-debounced
 # or
