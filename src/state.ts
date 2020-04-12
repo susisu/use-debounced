@@ -10,9 +10,9 @@ export type UseDebouncedStateOptions<T> = Readonly<{
 }>;
 
 export type UseDebouncedStateResult<T> = [
-  T,
-  (state: T) => void,
-  boolean,
+  T, // state
+  (state: T) => void, // setState (debounced)
+  boolean, // isWaiting
   {
     cancel: () => void;
     reset: (state: T) => void;
@@ -20,6 +20,9 @@ export type UseDebouncedStateResult<T> = [
   }
 ];
 
+/**
+ * useDebouncedState is like the standard useState hook, but state updates are debounced.
+ */
 export function useDebouncedState<T>(
   options: UseDebouncedStateOptions<T>
 ): UseDebouncedStateResult<T> {

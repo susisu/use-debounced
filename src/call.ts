@@ -11,9 +11,9 @@ export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<
 }>;
 
 export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
-  R,
-  (...args: T) => void,
-  boolean,
+  R, // result
+  (...args: T) => void, // call (debounced)
+  boolean, // isWaiting
   {
     cancel: () => void;
     reset: (result: R) => void;
@@ -21,6 +21,10 @@ export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
   }
 ];
 
+/**
+ * useDebouncedCall debounces synchronous function calls.
+ * When the given function is invoked after timeout, the result will be set to the state.
+ */
 export function useDebouncedCall<R, T extends readonly unknown[]>(
   options: UseDebouncedCallOptions<R, T>
 ): UseDebouncedCallResult<R, T> {

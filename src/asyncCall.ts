@@ -12,9 +12,9 @@ export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Read
 }>;
 
 export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
-  R,
-  (...args: T) => void,
-  boolean,
+  R, // result
+  (...args: T) => void, // call (debounced)
+  boolean, // isWaiting
   {
     cancel: () => void;
     reset: (result: R) => void;
@@ -136,6 +136,7 @@ const handleCancel = <R>(state: State<R>): State<R> => {
 const handleReset = <R>(state: State<R>, result: R): State<R> => {
   // eslint-disable-next-line default-case
   switch (state.type) {
+    // assuming it has already been cancelled
     case "standby":
       return state.result === result ? state : { type: "standby", result };
     case "waiting":
@@ -166,6 +167,11 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
   }
 };
 
+/**
+ * useDebouncedCall debounces asynchronous function calls.
+ * When the given function is invoked after timeout and it is fulfilled, the result will be set to
+ * the state.
+ */
 export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
 ): UseDebouncedAsyncCallResult<R, T> {
@@ -247,7 +253,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   );
 
   const result = state.result;
-  const isWaiting = state.type !== "standby";
+  const isWaiting = state.type !== "standby"; // actually isWaitingOrPending
   return [
     result,
     debouncedCall,

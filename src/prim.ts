@@ -25,6 +25,11 @@ type DebouncedPrimState<T> =
       count: number;
     }>;
 
+/**
+ * useDebouncedPrim is a primitive hook that provides fundamental features of debouncing.
+ * The user can pass callbacks that are invoked on trigger, leading and trailing edge of timeout,
+ * and cancel, to update component state or do some other actions on each timing.
+ */
 export function useDebouncedPrim<T extends readonly unknown[]>(
   options: UseDebouncedPrimOptions<T>
 ): UseDebouncedPrimResult<T> {
