@@ -268,6 +268,42 @@ describe("useDebouncedState", () => {
     });
   });
 
+  describe("reset", () => {
+    it("should cancel the waiting state update and set the given value to the state", () => {
+      const t = renderHook(() =>
+        useDebouncedState({
+          init: "",
+          wait: 1000,
+        })
+      );
+      const [, setState, , , reset] = t.result.current;
+      let [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        setState("foo");
+      });
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("");
+      expect(isWaiting).toBe(true);
+
+      act(() => {
+        reset("RESET");
+      });
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("RESET");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      [state, , isWaiting] = t.result.current;
+      expect(state).toBe("RESET");
+      expect(isWaiting).toBe(false);
+    });
+  });
+
   describe("flush", () => {
     it("should flush the waiting state update", () => {
       const t = renderHook(() =>
@@ -276,7 +312,7 @@ describe("useDebouncedState", () => {
           wait: 1000,
         })
       );
-      const [, setState, , , flush] = t.result.current;
+      const [, setState, , , , flush] = t.result.current;
       let [state, , isWaiting] = t.result.current;
       expect(state).toBe("");
       expect(isWaiting).toBe(false);

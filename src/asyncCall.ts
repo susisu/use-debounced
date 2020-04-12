@@ -23,7 +23,8 @@ type Action<R> =
   | Readonly<{ type: "trailingCall"; skip: boolean }>
   | Readonly<{ type: "fulfill"; result: R }>
   | Readonly<{ type: "reject" }>
-  | Readonly<{ type: "cancel" }>;
+  | Readonly<{ type: "cancel" }>
+  | Readonly<{ type: "reset"; result: R }>;
 
 const initializer = <R>(init: R | (() => R)): State<R> => {
   if (typeof init === "function") {
@@ -121,6 +122,19 @@ const handleCancel = <R>(state: State<R>): State<R> => {
 };
 
 // eslint-disable-next-line consistent-return
+const handleReset = <R>(state: State<R>, result: R): State<R> => {
+  // eslint-disable-next-line default-case
+  switch (state.type) {
+    case "standby":
+      return state.result === result ? state : { type: "standby", result };
+    case "waiting":
+    case "pending":
+    case "waiting-pending":
+      throw new Error(`unexpected state: ${state.type}`);
+  }
+};
+
+// eslint-disable-next-line consistent-return
 const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
   // eslint-disable-next-line default-case
   switch (action.type) {
@@ -136,12 +150,14 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
       return handleReject(state);
     case "cancel":
       return handleCancel(state);
+    case "reset":
+      return handleReset(state, action.result);
   }
 };
 
 export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
-): [R, (...args: T) => void, boolean, () => void, () => void] {
+): [R, (...args: T) => void, boolean, () => void, (result: R) => void, () => void] {
   const funcRef = useRef(options.func);
   funcRef.current = options.func;
   const leadingRef = useRef(options.leading ?? false);
@@ -204,6 +220,11 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     maxWait: options.maxWait,
   });
 
+  const resetRef = useRef((result: R): void => {
+    cancel();
+    dispatch({ type: "reset", result });
+  });
+
   useEffect(
     () => () => {
       if (cancelAsyncCallRef.current) {
@@ -216,5 +237,5 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
 
   const result = state.result;
   const isWaiting = state.type !== "standby";
-  return [result, debouncedCall, isWaiting, cancel, flush];
+  return [result, debouncedCall, isWaiting, cancel, resetRef.current, flush];
 }

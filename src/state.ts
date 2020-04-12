@@ -11,7 +11,7 @@ type UseDebouncedStateOptions<T> = Readonly<{
 
 export function useDebouncedState<T>(
   options: UseDebouncedStateOptions<T>
-): [T, (state: T) => void, boolean, () => void, () => void] {
+): [T, (state: T) => void, boolean, () => void, (state: T) => void, () => void] {
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
 
@@ -39,5 +39,10 @@ export function useDebouncedState<T>(
     maxWait: options.maxWait,
   });
 
-  return [state, debouncedSetState, isWaiting, cancel, flush];
+  const resetRef = useRef((state: T): void => {
+    cancel();
+    setState(state);
+  });
+
+  return [state, debouncedSetState, isWaiting, cancel, resetRef.current, flush];
 }

@@ -604,6 +604,119 @@ describe("useDebouncedAsyncCall", () => {
     });
   });
 
+  describe("reset", () => {
+    it("should cancel the waiting function call and set the given value to the result", () => {
+      const { func } = createMockFunc();
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
+      );
+      expect(func).not.toHaveBeenCalled();
+      const [, call, , , reset] = t.result.current;
+      let [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        call("foo");
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
+
+      act(() => {
+        reset("RESET");
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+    });
+
+    it("should cancel the pending function call and set the given value to the result", () => {
+      const { func, resolves } = createMockFunc();
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
+      );
+      expect(func).not.toHaveBeenCalled();
+      const [, call, , , reset] = t.result.current;
+      let [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        call("foo");
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(func).toHaveBeenCalledTimes(1);
+      expect(func).toHaveBeenLastCalledWith("foo");
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
+
+      act(() => {
+        reset("RESET");
+      });
+      expect(func).toHaveBeenCalledTimes(1);
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+
+      resolves[0]("FOO"); // should not update the state
+      expect(func).toHaveBeenCalledTimes(1);
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+    });
+
+    it("should only set the given value to the result if there are no waiting or pending function calls", () => {
+      const { func } = createMockFunc();
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
+      );
+      expect(func).not.toHaveBeenCalled();
+      const [, , , , reset] = t.result.current;
+      let [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        reset("RESET");
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+    });
+  });
+
   describe("flush", () => {
     it("should flush the waiting function call", async () => {
       const { func, resolves } = createMockFunc();
@@ -615,7 +728,7 @@ describe("useDebouncedAsyncCall", () => {
         })
       );
       expect(func).not.toHaveBeenCalled();
-      const [, call, , , flush] = t.result.current;
+      const [, call, , , , flush] = t.result.current;
       let [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(false);

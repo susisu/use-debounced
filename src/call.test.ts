@@ -314,6 +314,48 @@ describe("useDebouncedCall", () => {
     });
   });
 
+  describe("reset", () => {
+    it("should cancel the waiting function call and set the given value to the result", () => {
+      const func = jest.fn<string, [string]>(str => str.toUpperCase());
+      const t = renderHook(() =>
+        useDebouncedCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
+      );
+      expect(func).not.toHaveBeenCalled();
+      const [, call, , , reset] = t.result.current;
+      let [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        call("foo");
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
+
+      act(() => {
+        reset("RESET");
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      expect(func).not.toHaveBeenCalled();
+      [res, , isWaiting] = t.result.current;
+      expect(res).toBe("RESET");
+      expect(isWaiting).toBe(false);
+    });
+  });
+
   describe("flush", () => {
     it("should flush the waiting function call", () => {
       const func = jest.fn<string, [string]>(str => str.toUpperCase());
@@ -325,7 +367,7 @@ describe("useDebouncedCall", () => {
         })
       );
       expect(func).not.toHaveBeenCalled();
-      const [, call, , , flush] = t.result.current;
+      const [, call, , , , flush] = t.result.current;
       let [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(false);

@@ -12,7 +12,7 @@ type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
 
 export function useDebouncedCall<R, T extends readonly unknown[]>(
   options: UseDebouncedCallOptions<R, T>
-): [R, (...args: T) => void, boolean, () => void, () => void] {
+): [R, (...args: T) => void, boolean, () => void, (result: R) => void, () => void] {
   const funcRef = useRef(options.func);
   funcRef.current = options.func;
   const leadingRef = useRef(options.leading ?? false);
@@ -44,5 +44,10 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
     maxWait: options.maxWait,
   });
 
-  return [result, debouncedCall, isWaiting, cancel, flush];
+  const resetRef = useRef((result: R): void => {
+    cancel();
+    setResult(result);
+  });
+
+  return [result, debouncedCall, isWaiting, cancel, resetRef.current, flush];
 }
