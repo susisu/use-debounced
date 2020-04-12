@@ -20,13 +20,14 @@ describe("useDebouncedCall", () => {
         wait: 1000,
       })
     );
-    const [, call1, , cancel1, flush1] = t.result.current;
+    const [, call1, , r1] = t.result.current;
 
     t.rerender();
-    const [, call2, , cancel2, flush2] = t.result.current;
+    const [, call2, , r2] = t.result.current;
     expect(call2).toBe(call1);
-    expect(cancel2).toBe(cancel1);
-    expect(flush2).toBe(flush1);
+    expect(r2.cancel).toBe(r1.cancel);
+    expect(r2.reset).toBe(r1.reset);
+    expect(r2.flush).toBe(r1.flush);
   });
 
   it("should initialize the result with the given value", () => {
@@ -283,7 +284,7 @@ describe("useDebouncedCall", () => {
         })
       );
       expect(func).not.toHaveBeenCalled();
-      const [, call, , cancel] = t.result.current;
+      const [, call, , { cancel }] = t.result.current;
       let [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(false);
@@ -325,7 +326,7 @@ describe("useDebouncedCall", () => {
         })
       );
       expect(func).not.toHaveBeenCalled();
-      const [, call, , , reset] = t.result.current;
+      const [, call, , { reset }] = t.result.current;
       let [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(false);
@@ -367,7 +368,7 @@ describe("useDebouncedCall", () => {
         })
       );
       expect(func).not.toHaveBeenCalled();
-      const [, call, , , , flush] = t.result.current;
+      const [, call, , { flush }] = t.result.current;
       let [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(false);

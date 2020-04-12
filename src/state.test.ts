@@ -18,13 +18,14 @@ describe("useDebouncedState", () => {
         wait: 1000,
       })
     );
-    const [, setState1, , cancel1, flush1] = t.result.current;
+    const [, setState1, , r1] = t.result.current;
 
     t.rerender();
-    const [, setState2, , cancel2, flush2] = t.result.current;
+    const [, setState2, , r2] = t.result.current;
     expect(setState2).toBe(setState1);
-    expect(cancel2).toBe(cancel1);
-    expect(flush2).toBe(flush1);
+    expect(r2.cancel).toBe(r1.cancel);
+    expect(r2.reset).toBe(r1.reset);
+    expect(r2.flush).toBe(r1.flush);
   });
 
   it("should initialize the state with the given value", () => {
@@ -240,7 +241,7 @@ describe("useDebouncedState", () => {
           wait: 1000,
         })
       );
-      const [, setState, , cancel] = t.result.current;
+      const [, setState, , { cancel }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
       expect(state).toBe("");
       expect(isWaiting).toBe(false);
@@ -276,7 +277,7 @@ describe("useDebouncedState", () => {
           wait: 1000,
         })
       );
-      const [, setState, , , reset] = t.result.current;
+      const [, setState, , { reset }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
       expect(state).toBe("");
       expect(isWaiting).toBe(false);
@@ -312,7 +313,7 @@ describe("useDebouncedState", () => {
           wait: 1000,
         })
       );
-      const [, setState, , , , flush] = t.result.current;
+      const [, setState, , { flush }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
       expect(state).toBe("");
       expect(isWaiting).toBe(false);

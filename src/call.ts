@@ -10,9 +10,20 @@ type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
   trailing?: boolean;
 }>;
 
+type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
+  R,
+  (...args: T) => void,
+  boolean,
+  {
+    cancel: () => void;
+    reset: (result: R) => void;
+    flush: () => void;
+  }
+];
+
 export function useDebouncedCall<R, T extends readonly unknown[]>(
   options: UseDebouncedCallOptions<R, T>
-): [R, (...args: T) => void, boolean, () => void, (result: R) => void, () => void] {
+): UseDebouncedCallResult<R, T> {
   const funcRef = useRef(options.func);
   funcRef.current = options.func;
   const leadingRef = useRef(options.leading ?? false);
@@ -49,5 +60,14 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
     setResult(result);
   });
 
-  return [result, debouncedCall, isWaiting, cancel, resetRef.current, flush];
+  return [
+    result,
+    debouncedCall,
+    isWaiting,
+    {
+      cancel,
+      reset: resetRef.current,
+      flush,
+    },
+  ];
 }

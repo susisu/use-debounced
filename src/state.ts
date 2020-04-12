@@ -9,9 +9,20 @@ type UseDebouncedStateOptions<T> = Readonly<{
   trailing?: boolean;
 }>;
 
+type UseDebouncedStateResult<T> = [
+  T,
+  (state: T) => void,
+  boolean,
+  {
+    cancel: () => void;
+    reset: (state: T) => void;
+    flush: () => void;
+  }
+];
+
 export function useDebouncedState<T>(
   options: UseDebouncedStateOptions<T>
-): [T, (state: T) => void, boolean, () => void, (state: T) => void, () => void] {
+): UseDebouncedStateResult<T> {
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
 
@@ -44,5 +55,14 @@ export function useDebouncedState<T>(
     setState(state);
   });
 
-  return [state, debouncedSetState, isWaiting, cancel, resetRef.current, flush];
+  return [
+    state,
+    debouncedSetState,
+    isWaiting,
+    {
+      cancel,
+      reset: resetRef.current,
+      flush,
+    },
+  ];
 }

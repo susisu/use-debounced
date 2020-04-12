@@ -11,6 +11,17 @@ type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
   trailing?: boolean;
 }>;
 
+type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
+  R,
+  (...args: T) => void,
+  boolean,
+  {
+    cancel: () => void;
+    reset: (result: R) => void;
+    flush: () => void;
+  }
+];
+
 type State<R> =
   | Readonly<{ type: "standby"; result: R }>
   | Readonly<{ type: "waiting"; result: R }>
@@ -157,7 +168,7 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
 
 export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
-): [R, (...args: T) => void, boolean, () => void, (result: R) => void, () => void] {
+): UseDebouncedAsyncCallResult<R, T> {
   const funcRef = useRef(options.func);
   funcRef.current = options.func;
   const leadingRef = useRef(options.leading ?? false);
@@ -237,5 +248,14 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
 
   const result = state.result;
   const isWaiting = state.type !== "standby";
-  return [result, debouncedCall, isWaiting, cancel, resetRef.current, flush];
+  return [
+    result,
+    debouncedCall,
+    isWaiting,
+    {
+      cancel,
+      reset: resetRef.current,
+      flush,
+    },
+  ];
 }
