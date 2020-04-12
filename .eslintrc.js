@@ -32,6 +32,9 @@ module.exports = {
       env: {
         "jest/globals": true,
       },
+      rules: {
+        "@typescript-eslint/no-floating-promises": "off",
+      },
     },
     {
       files: ["*.js"],
