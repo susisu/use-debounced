@@ -66,7 +66,7 @@ describe("useDebouncedPrim", () => {
     jest.advanceTimersByTime(500);
     expect(leadingCallback).toHaveBeenCalledTimes(1);
     expect(trailingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 2);
+    expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
   });
 
   it("should flush waiting timeout after maxWait", () => {
@@ -96,10 +96,10 @@ describe("useDebouncedPrim", () => {
 
     jest.advanceTimersByTime(500);
     expect(trailingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 2);
+    expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
   });
 
-  it("should count the number of non-leading function calls", () => {
+  it("should count the number of triggers", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -121,7 +121,7 @@ describe("useDebouncedPrim", () => {
     jest.advanceTimersByTime(1000);
     expect(leadingCallback).toHaveBeenCalledTimes(1);
     expect(trailingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 0);
+    expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
 
     trigger("bar");
     trigger("baz");
@@ -133,7 +133,7 @@ describe("useDebouncedPrim", () => {
     jest.advanceTimersByTime(1000);
     expect(leadingCallback).toHaveBeenCalledTimes(2);
     expect(trailingCallback).toHaveBeenCalledTimes(2);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["qux"], 2);
+    expect(trailingCallback).toHaveBeenLastCalledWith(["qux"], 3);
   });
 
   it("should not invoke the leading callback after the component is unmounted", () => {
@@ -302,7 +302,7 @@ describe("useDebouncedPrim", () => {
       jest.advanceTimersByTime(1000);
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 0);
+      expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
     });
 
     it("should do nothing if the component has been unmounted", () => {
@@ -362,7 +362,7 @@ describe("useDebouncedPrim", () => {
       flush();
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenLastCalledWith(["bar"], 1);
+      expect(trailingCallback).toHaveBeenLastCalledWith(["bar"], 2);
     });
 
     it("should do nothing if there is no waiting invocation", () => {
@@ -391,7 +391,7 @@ describe("useDebouncedPrim", () => {
       jest.advanceTimersByTime(1000);
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 0);
+      expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
     });
 
     it("should do nothing if the component has been unmounted", () => {

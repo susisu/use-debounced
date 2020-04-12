@@ -65,7 +65,7 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
           maxWaitRef.current !== undefined
             ? setTimeout(flushRef.current, maxWaitRef.current)
             : undefined;
-        stateRef.current = { type: "waiting", timerId, maxWaitTimerId, args, count: 0 };
+        stateRef.current = { type: "waiting", timerId, maxWaitTimerId, args, count: 1 };
         const leadingCallback = leadingCallbackRef.current;
         leadingCallback(args);
         break;
