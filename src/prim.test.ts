@@ -328,19 +328,19 @@ describe("useDebouncedPrim", () => {
       cancel();
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
-      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
 
       trigger("foo");
       expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
       expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
-      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
 
       jest.advanceTimersByTime(1000);
       expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
       expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
       expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
-      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
     });
 
     it("should do nothing if the component has been unmounted", () => {

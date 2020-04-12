@@ -103,11 +103,11 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
           clearTimeout(maxWaitTimerId);
         }
         stateRef.current = { type: "standby" };
-        const cancelCallback = cancelCallbackRef.current;
-        cancelCallback();
         break;
       }
     }
+    const cancelCallback = cancelCallbackRef.current;
+    cancelCallback();
   });
 
   useEffect(
