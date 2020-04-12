@@ -169,7 +169,7 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
 };
 
 /**
- * useDebouncedCall debounces asynchronous function calls.
+ * useDebouncedAsyncCall debounces asynchronous function calls.
  * When the given function is invoked after timeout and it is fulfilled, the result will be set to
  * the state.
  */
