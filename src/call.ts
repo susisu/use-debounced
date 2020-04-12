@@ -21,7 +21,7 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
   const [result, setResult] = useState<R>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);
 
-  const [debouncedCall, cancel, flush] = useDebouncedPrim<T>({
+  const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
     triggerCallback: () => {},
     leadingCallback: args => {
       if (leadingRef.current) {

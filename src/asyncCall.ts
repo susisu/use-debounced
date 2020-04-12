@@ -187,7 +187,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     );
   });
 
-  const [debouncedCall, cancel, flush] = useDebouncedPrim<T>({
+  const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
     triggerCallback: () => {
       dispatch({ type: "trigger" });
     },

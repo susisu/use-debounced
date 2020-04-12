@@ -31,13 +31,13 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [trigger1, cancel1, flush1] = t.result.current;
+    const r1 = t.result.current;
 
     t.rerender();
-    const [trigger2, cancel2, flush2] = t.result.current;
-    expect(trigger2).toBe(trigger1);
-    expect(cancel2).toBe(cancel1);
-    expect(flush2).toBe(flush1);
+    const r2 = t.result.current;
+    expect(r2.trigger).toBe(r1.trigger);
+    expect(r2.cancel).toBe(r1.cancel);
+    expect(r2.flush).toBe(r1.flush);
   });
 
   it("should invoke the leading and trailing callbacks on the respective edges of timeout", () => {
@@ -48,7 +48,7 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.triggerCallback).not.toHaveBeenCalled();
     expect(callbacks.leadingCallback).not.toHaveBeenCalled();
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe("useDebouncedPrim", () => {
         maxWait: 1500,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
@@ -119,7 +119,7 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.leadingCallback).not.toHaveBeenCalled();
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
@@ -154,7 +154,7 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.triggerCallback).not.toHaveBeenCalled();
 
     trigger("foo");
@@ -174,7 +174,7 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.leadingCallback).not.toHaveBeenCalled();
 
     t.unmount();
@@ -191,7 +191,7 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
@@ -212,7 +212,7 @@ describe("useDebouncedPrim", () => {
         maxWait: 1500,
       })
     );
-    const [trigger] = t.result.current;
+    const { trigger } = t.result.current;
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
@@ -241,7 +241,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [trigger, cancel] = t.result.current;
+      const { trigger, cancel } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
       expect(callbacks.cancelCallback).not.toHaveBeenCalled();
@@ -278,7 +278,7 @@ describe("useDebouncedPrim", () => {
           maxWait: 1500,
         })
       );
-      const [trigger, cancel] = t.result.current;
+      const { trigger, cancel } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
       expect(callbacks.cancelCallback).not.toHaveBeenCalled();
@@ -320,7 +320,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [trigger, cancel] = t.result.current;
+      const { trigger, cancel } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
       expect(callbacks.cancelCallback).not.toHaveBeenCalled();
@@ -351,7 +351,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [trigger, cancel] = t.result.current;
+      const { trigger, cancel } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
       expect(callbacks.cancelCallback).not.toHaveBeenCalled();
@@ -385,7 +385,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [trigger, , flush] = t.result.current;
+      const { trigger, flush } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
@@ -413,7 +413,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [trigger, , flush] = t.result.current;
+      const { trigger, flush } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
@@ -440,7 +440,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [trigger, , flush] = t.result.current;
+      const { trigger, flush } = t.result.current;
       expect(callbacks.leadingCallback).not.toHaveBeenCalled();
       expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 

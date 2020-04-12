@@ -19,9 +19,15 @@ type DebouncedPrimState<T> =
       count: number;
     }>;
 
+type UseDebouncedPrimResult<T extends readonly unknown[]> = {
+  trigger: (...args: T) => void;
+  cancel: () => void;
+  flush: () => void;
+};
+
 export function useDebouncedPrim<T extends readonly unknown[]>(
   options: UseDebouncedPrimOptions<T>
-): [(...args: T) => void, () => void, () => void] {
+): UseDebouncedPrimResult<T> {
   const triggerCallbackRef = useRef(options.triggerCallback);
   triggerCallbackRef.current = options.triggerCallback;
   const leadingCallbackRef = useRef(options.leadingCallback);
@@ -130,5 +136,9 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
     []
   );
 
-  return [triggerRef.current, cancelRef.current, flushRef.current];
+  return {
+    trigger: triggerRef.current,
+    cancel: cancelRef.current,
+    flush: flushRef.current,
+  };
 }
