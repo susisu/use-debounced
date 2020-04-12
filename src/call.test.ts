@@ -57,7 +57,7 @@ describe("useDebouncedCall", () => {
     expect(res).toBe("");
   });
 
-  it("should debounce function call", () => {
+  it("should debounce function calls", () => {
     const func = jest.fn<string, [string]>(str => str.toUpperCase());
     const t = renderHook(() =>
       useDebouncedCall({
