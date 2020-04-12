@@ -9,7 +9,7 @@ yarn add @susisu/use-debounced
 ```
 
 ## Usage
-### `useDebouncesState`
+### `useDebouncedState`
 `useDebouncedState` is like the standard `useState` hook, but state updates are debounced.
 
 ``` tsx
