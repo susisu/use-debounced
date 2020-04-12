@@ -12,22 +12,22 @@ describe("useDebouncedPrim", () => {
   });
 
   const createMockCallbacks = (): {
+    triggerCallback: jest.Mock<void, []>;
     leadingCallback: jest.Mock<void, [[string]]>;
     trailingCallback: jest.Mock<void, [[string], number]>;
     cancelCallback: jest.Mock<void, []>;
   } => ({
+    triggerCallback: jest.fn(),
     leadingCallback: jest.fn(),
     trailingCallback: jest.fn(),
     cancelCallback: jest.fn(),
   });
 
   it("should always return the identical functions", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
       })
     );
@@ -41,419 +41,419 @@ describe("useDebouncedPrim", () => {
   });
 
   it("should invoke the leading and trailing callbacks on the respective edges of timeout", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
       })
     );
     const [trigger] = t.result.current;
-    expect(leadingCallback).not.toHaveBeenCalled();
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.triggerCallback).not.toHaveBeenCalled();
+    expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("bar");
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(2);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("baz");
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(3);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(3);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(3);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
   });
 
   it("should flush waiting timeout after maxWait", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
         maxWait: 1500,
       })
     );
     const [trigger] = t.result.current;
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("bar");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("baz");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    expect(trailingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
+    expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
   });
 
   it("should count the number of triggers", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
       })
     );
     const [trigger] = t.result.current;
-    expect(leadingCallback).not.toHaveBeenCalled();
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(1000);
-    expect(leadingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenCalledTimes(1);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
 
     trigger("bar");
     trigger("baz");
     trigger("qux");
-    expect(leadingCallback).toHaveBeenCalledTimes(2);
-    expect(leadingCallback).toHaveBeenLastCalledWith(["bar"]);
-    expect(trailingCallback).toHaveBeenCalledTimes(1);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(2);
+    expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["bar"]);
+    expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
 
     jest.advanceTimersByTime(1000);
-    expect(leadingCallback).toHaveBeenCalledTimes(2);
-    expect(trailingCallback).toHaveBeenCalledTimes(2);
-    expect(trailingCallback).toHaveBeenLastCalledWith(["qux"], 3);
+    expect(callbacks.leadingCallback).toHaveBeenCalledTimes(2);
+    expect(callbacks.trailingCallback).toHaveBeenCalledTimes(2);
+    expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["qux"], 3);
+  });
+
+  it("should not invoke the trigger callback after the component is unmounted", () => {
+    const callbacks = createMockCallbacks();
+    const t = renderHook(() =>
+      useDebouncedPrim({
+        ...callbacks,
+        wait: 1000,
+      })
+    );
+    const [trigger] = t.result.current;
+    expect(callbacks.triggerCallback).not.toHaveBeenCalled();
+
+    trigger("foo");
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(1);
+
+    t.unmount();
+
+    trigger("bar");
+    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(1);
   });
 
   it("should not invoke the leading callback after the component is unmounted", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
       })
     );
     const [trigger] = t.result.current;
-    expect(leadingCallback).not.toHaveBeenCalled();
+    expect(callbacks.leadingCallback).not.toHaveBeenCalled();
 
     t.unmount();
 
     trigger("foo");
-    expect(leadingCallback).not.toHaveBeenCalled();
+    expect(callbacks.leadingCallback).not.toHaveBeenCalled();
   });
 
   it("should not invoke the trailing callback after the component is unmounted", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
       })
     );
     const [trigger] = t.result.current;
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     t.unmount();
 
     jest.advanceTimersByTime(1000);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
   });
 
   it("should not invoke the trailing callback with maxWait after the component is unmounted", () => {
-    const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+    const callbacks = createMockCallbacks();
     const t = renderHook(() =>
       useDebouncedPrim({
-        leadingCallback,
-        trailingCallback,
-        cancelCallback,
+        ...callbacks,
         wait: 1000,
         maxWait: 1500,
       })
     );
     const [trigger] = t.result.current;
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("bar");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("baz");
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     t.unmount();
 
     jest.advanceTimersByTime(500);
-    expect(trailingCallback).not.toHaveBeenCalled();
+    expect(callbacks.trailingCallback).not.toHaveBeenCalled();
   });
 
   describe("cancel", () => {
     it("should cancel the waiting invocations", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
         })
       );
       const [trigger, cancel] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
       trigger("bar");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       cancel();
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
 
       jest.advanceTimersByTime(1000);
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
     });
 
     it("should cancel the waiting invocations with maxWait", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
           maxWait: 1500,
         })
       );
       const [trigger, cancel] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
       trigger("bar");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
       trigger("baz");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       cancel();
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
 
       jest.advanceTimersByTime(500);
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
     });
 
     it("should do nothing if there is no waiting invocation", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
         })
       );
       const [trigger, cancel] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       cancel();
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(1000);
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
     });
 
     it("should do nothing if the component has been unmounted", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
         })
       );
       const [trigger, cancel] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       t.unmount();
 
       cancel();
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(1000);
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
-      expect(cancelCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.cancelCallback).not.toHaveBeenCalled();
     });
   });
 
   describe("flush", () => {
     it("should flush the waiting invocations", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
         })
       );
       const [trigger, , flush] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
       trigger("bar");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       flush();
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenLastCalledWith(["bar"], 2);
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["bar"], 2);
     });
 
     it("should do nothing if there is no waiting invocation", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
         })
       );
       const [trigger, , flush] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       flush();
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(1000);
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["foo"], 1);
     });
 
     it("should do nothing if the component has been unmounted", () => {
-      const { leadingCallback, trailingCallback, cancelCallback } = createMockCallbacks();
+      const callbacks = createMockCallbacks();
       const t = renderHook(() =>
         useDebouncedPrim({
-          leadingCallback,
-          trailingCallback,
-          cancelCallback,
+          ...callbacks,
           wait: 1000,
         })
       );
       const [trigger, , flush] = t.result.current;
-      expect(leadingCallback).not.toHaveBeenCalled();
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).not.toHaveBeenCalled();
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       trigger("foo");
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
       t.unmount();
 
       flush();
-      expect(leadingCallback).toHaveBeenCalledTimes(1);
-      expect(trailingCallback).not.toHaveBeenCalled();
+      expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
+      expect(callbacks.trailingCallback).not.toHaveBeenCalled();
     });
   });
 });
