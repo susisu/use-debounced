@@ -3,13 +3,17 @@ import { triplet, ResolveFunc, RejectFunc } from "@susisu/promise-utils";
 import { useDebouncedAsyncCall } from "./asyncCall";
 
 describe("useDebouncedAsyncCall", () => {
+  let spy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.useFakeTimers();
+    spy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     jest.clearAllTimers();
     jest.useRealTimers();
+    spy.mockRestore();
   });
 
   const createMockFunc = (): {

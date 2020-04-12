@@ -212,7 +212,9 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
         cancelAsyncCallRef.current = undefined;
         dispatch({ type: "fulfill", result });
       },
-      () => {
+      err => {
+        // eslint-disable-next-line no-console
+        console.error(err);
         cancelAsyncCallRef.current = undefined;
         prevArgsRef.current = undefined;
         dispatch({ type: "reject" });
