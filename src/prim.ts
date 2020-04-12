@@ -34,15 +34,23 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
   options: UseDebouncedPrimOptions<T>
 ): UseDebouncedPrimResult<T> {
   const triggerCallbackRef = useRef(options.triggerCallback);
-  triggerCallbackRef.current = options.triggerCallback;
   const leadingCallbackRef = useRef(options.leadingCallback);
-  leadingCallbackRef.current = options.leadingCallback;
   const trailingCallbackRef = useRef(options.trailingCallback);
-  trailingCallbackRef.current = options.trailingCallback;
   const cancelCallbackRef = useRef(options.cancelCallback);
-  cancelCallbackRef.current = options.cancelCallback;
   const waitRef = useRef(options.wait);
   const maxWaitRef = useRef(options.maxWait);
+
+  useEffect(() => {
+    triggerCallbackRef.current = options.triggerCallback;
+    leadingCallbackRef.current = options.leadingCallback;
+    trailingCallbackRef.current = options.trailingCallback;
+    cancelCallbackRef.current = options.cancelCallback;
+  }, [
+    options.triggerCallback,
+    options.leadingCallback,
+    options.trailingCallback,
+    options.cancelCallback,
+  ]);
 
   const isUnmountedRef = useRef<boolean>(false);
 

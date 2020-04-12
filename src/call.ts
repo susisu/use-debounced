@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useDebouncedPrim } from "./prim";
 
 export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
@@ -30,11 +30,14 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
   options: UseDebouncedCallOptions<R, T>
 ): UseDebouncedCallResult<R, T> {
   const funcRef = useRef(options.func);
-  funcRef.current = options.func;
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
   const shouldCallRef = useRef(options.shouldCall);
-  shouldCallRef.current = options.shouldCall;
+
+  useEffect(() => {
+    funcRef.current = options.func;
+    shouldCallRef.current = options.shouldCall;
+  }, [options.func, options.shouldCall]);
 
   const [result, setResult] = useState<R>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);

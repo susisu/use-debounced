@@ -1,4 +1,4 @@
-import { useRef, useReducer, Reducer, useEffect } from "react";
+import { useRef, useEffect, useReducer, Reducer } from "react";
 import { attachActions, CancelFunc } from "@susisu/promise-utils";
 import { useDebouncedPrim } from "./prim";
 
@@ -177,11 +177,14 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
 ): UseDebouncedAsyncCallResult<R, T> {
   const funcRef = useRef(options.func);
-  funcRef.current = options.func;
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
   const shouldCallRef = useRef(options.shouldCall);
-  shouldCallRef.current = options.shouldCall;
+
+  useEffect(() => {
+    funcRef.current = options.func;
+    shouldCallRef.current = options.shouldCall;
+  }, [options.func, options.shouldCall]);
 
   const [state, dispatch] = useReducer<Reducer<State<R>, Action<R>>, R | (() => R)>(
     reducer,
