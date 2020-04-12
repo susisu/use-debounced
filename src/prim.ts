@@ -53,7 +53,7 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
     }
   });
 
-  const debouncedFunc = useRef((...args: T): void => {
+  const triggerRef = useRef((...args: T): void => {
     if (isUnmountedRef.current) {
       return;
     }
@@ -120,5 +120,5 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
     []
   );
 
-  return [debouncedFunc.current, cancelRef.current, flushRef.current];
+  return [triggerRef.current, cancelRef.current, flushRef.current];
 }

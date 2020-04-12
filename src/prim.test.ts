@@ -11,7 +11,7 @@ describe("useDebouncedPrim", () => {
     jest.useRealTimers();
   });
 
-  it("should always return the same functions", () => {
+  it("should always return the identical functions", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -21,16 +21,16 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [func1, cancel1, flush1] = t.result.current;
+    const [trigger1, cancel1, flush1] = t.result.current;
 
     t.rerender();
-    const [func2, cancel2, flush2] = t.result.current;
-    expect(func2).toBe(func1);
+    const [trigger2, cancel2, flush2] = t.result.current;
+    expect(trigger2).toBe(trigger1);
     expect(cancel2).toBe(cancel1);
     expect(flush2).toBe(flush1);
   });
 
-  it("should call the leading and trailing callbacks on the respective edges", () => {
+  it("should invoke the leading and trailing callbacks on the respective edges of timeout", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -40,22 +40,22 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [func] = t.result.current;
+    const [trigger] = t.result.current;
     expect(leadingCallback).not.toHaveBeenCalled();
     expect(trailingCallback).not.toHaveBeenCalled();
 
-    func("foo");
+    trigger("foo");
     expect(leadingCallback).toHaveBeenCalledTimes(1);
     expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
     expect(trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    func("bar");
+    trigger("bar");
     expect(leadingCallback).toHaveBeenCalledTimes(1);
     expect(trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    func("baz");
+    trigger("baz");
     expect(leadingCallback).toHaveBeenCalledTimes(1);
     expect(trailingCallback).not.toHaveBeenCalled();
 
@@ -69,7 +69,7 @@ describe("useDebouncedPrim", () => {
     expect(trailingCallback).toHaveBeenLastCalledWith(["baz"], 2);
   });
 
-  it("should immediately call the trailing callback after maxWait", () => {
+  it("should flush waiting timeout after maxWait", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -80,18 +80,18 @@ describe("useDebouncedPrim", () => {
         maxWait: 1500,
       })
     );
-    const [func] = t.result.current;
+    const [trigger] = t.result.current;
     expect(trailingCallback).not.toHaveBeenCalled();
 
-    func("foo");
-    expect(trailingCallback).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(500);
-    func("bar");
+    trigger("foo");
     expect(trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    func("baz");
+    trigger("bar");
+    expect(trailingCallback).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(500);
+    trigger("baz");
     expect(trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
@@ -109,11 +109,11 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [func] = t.result.current;
+    const [trigger] = t.result.current;
     expect(leadingCallback).not.toHaveBeenCalled();
     expect(trailingCallback).not.toHaveBeenCalled();
 
-    func("foo");
+    trigger("foo");
     expect(leadingCallback).toHaveBeenCalledTimes(1);
     expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
     expect(trailingCallback).not.toHaveBeenCalled();
@@ -123,9 +123,9 @@ describe("useDebouncedPrim", () => {
     expect(trailingCallback).toHaveBeenCalledTimes(1);
     expect(trailingCallback).toHaveBeenLastCalledWith(["foo"], 0);
 
-    func("bar");
-    func("baz");
-    func("qux");
+    trigger("bar");
+    trigger("baz");
+    trigger("qux");
     expect(leadingCallback).toHaveBeenCalledTimes(2);
     expect(leadingCallback).toHaveBeenLastCalledWith(["bar"]);
     expect(trailingCallback).toHaveBeenCalledTimes(1);
@@ -136,7 +136,7 @@ describe("useDebouncedPrim", () => {
     expect(trailingCallback).toHaveBeenLastCalledWith(["qux"], 2);
   });
 
-  it("should not call the leading callback after the component is unmounted", () => {
+  it("should not invoke the leading callback after the component is unmounted", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -146,16 +146,16 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [func] = t.result.current;
+    const [trigger] = t.result.current;
     expect(leadingCallback).not.toHaveBeenCalled();
 
     t.unmount();
 
-    func("foo");
+    trigger("foo");
     expect(leadingCallback).not.toHaveBeenCalled();
   });
 
-  it("should not call the trailing callback after the component is unmounted", () => {
+  it("should not invoke the trailing callback after the component is unmounted", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -165,10 +165,10 @@ describe("useDebouncedPrim", () => {
         wait: 1000,
       })
     );
-    const [func] = t.result.current;
+    const [trigger] = t.result.current;
     expect(trailingCallback).not.toHaveBeenCalled();
 
-    func("foo");
+    trigger("foo");
     expect(trailingCallback).not.toHaveBeenCalled();
 
     t.unmount();
@@ -177,7 +177,7 @@ describe("useDebouncedPrim", () => {
     expect(trailingCallback).not.toHaveBeenCalled();
   });
 
-  it("should not call the trailing callback after the component is unmounted with maxWait", () => {
+  it("should not invoke the trailing callback with maxWait after the component is unmounted", () => {
     const leadingCallback = jest.fn<void, [[string]]>();
     const trailingCallback = jest.fn<void, [[string], number]>();
     const t = renderHook(() =>
@@ -188,18 +188,18 @@ describe("useDebouncedPrim", () => {
         maxWait: 1500,
       })
     );
-    const [func] = t.result.current;
+    const [trigger] = t.result.current;
     expect(trailingCallback).not.toHaveBeenCalled();
 
-    func("foo");
-    expect(trailingCallback).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(500);
-    func("bar");
+    trigger("foo");
     expect(trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    func("baz");
+    trigger("bar");
+    expect(trailingCallback).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(500);
+    trigger("baz");
     expect(trailingCallback).not.toHaveBeenCalled();
 
     t.unmount();
@@ -209,7 +209,7 @@ describe("useDebouncedPrim", () => {
   });
 
   describe("cancel", () => {
-    it("should be able to cancel the waiting call", () => {
+    it("should cancel the waiting invocations", () => {
       const leadingCallback = jest.fn<void, [[string]]>();
       const trailingCallback = jest.fn<void, [[string], number]>();
       const t = renderHook(() =>
@@ -219,17 +219,17 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [func, cancel] = t.result.current;
+      const [trigger, cancel] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
-      func("bar");
+      trigger("bar");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).not.toHaveBeenCalled();
 
@@ -240,7 +240,7 @@ describe("useDebouncedPrim", () => {
       expect(trailingCallback).not.toHaveBeenCalled();
     });
 
-    it("should be able to cancel the waiting call with maxWait", () => {
+    it("should cancel the waiting invocations with maxWait", () => {
       const leadingCallback = jest.fn<void, [[string]]>();
       const trailingCallback = jest.fn<void, [[string], number]>();
       const t = renderHook(() =>
@@ -251,22 +251,22 @@ describe("useDebouncedPrim", () => {
           maxWait: 1500,
         })
       );
-      const [func, cancel] = t.result.current;
+      const [trigger, cancel] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
-      func("bar");
+      trigger("bar");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
-      func("baz");
+      trigger("baz");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).not.toHaveBeenCalled();
 
@@ -276,7 +276,7 @@ describe("useDebouncedPrim", () => {
       expect(trailingCallback).not.toHaveBeenCalled();
     });
 
-    it("should do nothing if there is no waiting call", () => {
+    it("should do nothing if there is no waiting invocation", () => {
       const leadingCallback = jest.fn<void, [[string]]>();
       const trailingCallback = jest.fn<void, [[string], number]>();
       const t = renderHook(() =>
@@ -286,7 +286,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [func, cancel] = t.result.current;
+      const [trigger, cancel] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
@@ -294,7 +294,7 @@ describe("useDebouncedPrim", () => {
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
@@ -315,11 +315,11 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [func, cancel] = t.result.current;
+      const [trigger, cancel] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
@@ -335,7 +335,7 @@ describe("useDebouncedPrim", () => {
   });
 
   describe("flush", () => {
-    it("should flush the waiting call", () => {
+    it("should flush the waiting invocations", () => {
       const leadingCallback = jest.fn<void, [[string]]>();
       const trailingCallback = jest.fn<void, [[string], number]>();
       const t = renderHook(() =>
@@ -345,17 +345,17 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [func, , flush] = t.result.current;
+      const [trigger, , flush] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
 
       jest.advanceTimersByTime(500);
-      func("bar");
+      trigger("bar");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(trailingCallback).not.toHaveBeenCalled();
 
@@ -365,7 +365,7 @@ describe("useDebouncedPrim", () => {
       expect(trailingCallback).toHaveBeenLastCalledWith(["bar"], 1);
     });
 
-    it("should do nothing if there is no waiting call", () => {
+    it("should do nothing if there is no waiting invocation", () => {
       const leadingCallback = jest.fn<void, [[string]]>();
       const trailingCallback = jest.fn<void, [[string], number]>();
       const t = renderHook(() =>
@@ -375,7 +375,7 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [func, , flush] = t.result.current;
+      const [trigger, , flush] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
@@ -383,7 +383,7 @@ describe("useDebouncedPrim", () => {
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
@@ -404,11 +404,11 @@ describe("useDebouncedPrim", () => {
           wait: 1000,
         })
       );
-      const [func, , flush] = t.result.current;
+      const [trigger, , flush] = t.result.current;
       expect(leadingCallback).not.toHaveBeenCalled();
       expect(trailingCallback).not.toHaveBeenCalled();
 
-      func("foo");
+      trigger("foo");
       expect(leadingCallback).toHaveBeenCalledTimes(1);
       expect(leadingCallback).toHaveBeenLastCalledWith(["foo"]);
       expect(trailingCallback).not.toHaveBeenCalled();
