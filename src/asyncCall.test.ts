@@ -558,6 +558,81 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(false);
   });
 
+  it("should reset the internal memory on rejection to ensure the function is called again even if shouldCall will return false", async () => {
+    const shouldCall = jest.fn<boolean, [[string], [string]]>(
+      ([prev], [next]) => prev.toUpperCase() !== next.toUpperCase()
+    );
+    const { func, resolves, rejects } = createMockFunc();
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+        shouldCall,
+      })
+    );
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).not.toHaveBeenCalled();
+    const [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
+
+    act(() => {
+      call("foo");
+    });
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("foo");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    rejects[0](new Error("test error"));
+    await t.waitForNextUpdate();
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
+
+    act(() => {
+      call("FOO");
+    });
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenLastCalledWith("FOO");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    resolves[1]("FOO");
+    await t.waitForNextUpdate();
+    expect(shouldCall).not.toHaveBeenCalled();
+    expect(func).toHaveBeenCalledTimes(2);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(false);
+  });
+
   it("should cancel the pending function call when the component is unmounted", () => {
     const { func, resolves } = createMockFunc();
     const t = renderHook(() =>
