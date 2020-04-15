@@ -30,7 +30,7 @@ type State<R> =
   | Readonly<{ type: "waiting-pending"; result: R }>;
 
 type Action<R> =
-  | Readonly<{ type: "trigger" }>
+  | Readonly<{ type: "start" }>
   | Readonly<{ type: "leadingCall"; skip: boolean }>
   | Readonly<{ type: "trailingCall"; skip: boolean }>
   | Readonly<{ type: "fulfill"; result: R }>
@@ -48,7 +48,7 @@ const initializer = <R>(init: R | (() => R)): State<R> => {
 };
 
 // eslint-disable-next-line consistent-return
-const handleTrigger = <R>(state: State<R>): State<R> => {
+const handleStart = <R>(state: State<R>): State<R> => {
   // eslint-disable-next-line default-case
   switch (state.type) {
     case "standby":
@@ -151,8 +151,8 @@ const handleReset = <R>(state: State<R>, result: R): State<R> => {
 const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
   // eslint-disable-next-line default-case
   switch (action.type) {
-    case "trigger":
-      return handleTrigger(state);
+    case "start":
+      return handleStart(state);
     case "leadingCall":
       return handleLeadingCall(state, action.skip);
     case "trailingCall":
@@ -225,7 +225,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
     leadingCallback: args => {
-      dispatch({ type: "trigger" });
+      dispatch({ type: "start" });
       const testShouldCall = testShouldCallRef.current;
       if (leadingRef.current && testShouldCall(args)) {
         dispatch({ type: "leadingCall", skip: false });
