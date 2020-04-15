@@ -56,7 +56,6 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
   });
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
-    triggerCallback: () => {},
     leadingCallback: args => {
       setIsWaiting(true);
       const testShouldCall = testShouldCallRef.current;

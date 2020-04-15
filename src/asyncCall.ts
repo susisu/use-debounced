@@ -224,7 +224,6 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   });
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
-    triggerCallback: () => {},
     leadingCallback: args => {
       dispatch({ type: "trigger" });
       const testShouldCall = testShouldCallRef.current;

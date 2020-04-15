@@ -33,7 +33,6 @@ export function useDebouncedState<T>(
   const [isWaiting, setIsWaiting] = useState(false);
 
   const { trigger: debouncedSetState, cancel, flush } = useDebouncedPrim<readonly [T]>({
-    triggerCallback: () => {},
     leadingCallback: ([state]) => {
       setIsWaiting(true);
       if (leadingRef.current) {

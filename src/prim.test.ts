@@ -12,12 +12,10 @@ describe("useDebouncedPrim", () => {
   });
 
   const createMockCallbacks = (): {
-    triggerCallback: jest.Mock<void, []>;
     leadingCallback: jest.Mock<void, [[string]]>;
     trailingCallback: jest.Mock<void, [[string], number]>;
     cancelCallback: jest.Mock<void, []>;
   } => ({
-    triggerCallback: jest.fn(),
     leadingCallback: jest.fn(),
     trailingCallback: jest.fn(),
     cancelCallback: jest.fn(),
@@ -49,35 +47,29 @@ describe("useDebouncedPrim", () => {
       })
     );
     const { trigger } = t.result.current;
-    expect(callbacks.triggerCallback).not.toHaveBeenCalled();
     expect(callbacks.leadingCallback).not.toHaveBeenCalled();
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     trigger("foo");
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.leadingCallback).toHaveBeenLastCalledWith(["foo"]);
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("bar");
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(2);
     expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
     trigger("baz");
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(3);
     expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(3);
     expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.trailingCallback).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(500);
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(3);
     expect(callbacks.leadingCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.trailingCallback).toHaveBeenCalledTimes(1);
     expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["baz"], 3);
@@ -144,26 +136,6 @@ describe("useDebouncedPrim", () => {
     expect(callbacks.leadingCallback).toHaveBeenCalledTimes(2);
     expect(callbacks.trailingCallback).toHaveBeenCalledTimes(2);
     expect(callbacks.trailingCallback).toHaveBeenLastCalledWith(["qux"], 3);
-  });
-
-  it("should not invoke the trigger callback after the component is unmounted", () => {
-    const callbacks = createMockCallbacks();
-    const t = renderHook(() =>
-      useDebouncedPrim({
-        ...callbacks,
-        wait: 1000,
-      })
-    );
-    const { trigger } = t.result.current;
-    expect(callbacks.triggerCallback).not.toHaveBeenCalled();
-
-    trigger("foo");
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(1);
-
-    t.unmount();
-
-    trigger("bar");
-    expect(callbacks.triggerCallback).toHaveBeenCalledTimes(1);
   });
 
   it("should not invoke the leading callback after the component is unmounted", () => {

@@ -1,7 +1,6 @@
 import { useRef, useEffect } from "react";
 
 export type UseDebouncedPrimOptions<T> = Readonly<{
-  triggerCallback: () => void;
   leadingCallback: (args: T) => void;
   trailingCallback: (args: T, count: number) => void;
   cancelCallback: () => void;
@@ -33,7 +32,6 @@ type DebouncedPrimState<T> =
 export function useDebouncedPrim<T extends readonly unknown[]>(
   options: UseDebouncedPrimOptions<T>
 ): UseDebouncedPrimResult<T> {
-  const triggerCallbackRef = useRef(options.triggerCallback);
   const leadingCallbackRef = useRef(options.leadingCallback);
   const trailingCallbackRef = useRef(options.trailingCallback);
   const cancelCallbackRef = useRef(options.cancelCallback);
@@ -41,16 +39,10 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
   const maxWaitRef = useRef(options.maxWait);
 
   useEffect(() => {
-    triggerCallbackRef.current = options.triggerCallback;
     leadingCallbackRef.current = options.leadingCallback;
     trailingCallbackRef.current = options.trailingCallback;
     cancelCallbackRef.current = options.cancelCallback;
-  }, [
-    options.triggerCallback,
-    options.leadingCallback,
-    options.trailingCallback,
-    options.cancelCallback,
-  ]);
+  }, [options.leadingCallback, options.trailingCallback, options.cancelCallback]);
 
   const isUnmountedRef = useRef<boolean>(false);
 
@@ -82,8 +74,6 @@ export function useDebouncedPrim<T extends readonly unknown[]>(
     if (isUnmountedRef.current) {
       return;
     }
-    const triggerCallback = triggerCallbackRef.current;
-    triggerCallback();
     // eslint-disable-next-line default-case
     switch (stateRef.current.type) {
       case "standby": {
