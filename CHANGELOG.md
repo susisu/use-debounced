@@ -1,3 +1,7 @@
+## 0.1.2 (2020-04-15)
+### Bug fixes
+- Fix state of `useDebouncedCall` and `useDebouncedAsyncCall` would get out of sync when debounced call is triggered in the original function.
+
 ## 0.1.1 (2020-04-12)
 ### Features
 - Log errors to console when promise rejection happened in `useDebouncedAsyncCall`
