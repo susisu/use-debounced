@@ -678,6 +678,69 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
   });
 
+  it("should be consistent if the debounced call is invoked in the function", async () => {
+    let call = (_str: string): void => {};
+    const { func: _func, resolves } = createMockFunc();
+    const func = jest.fn<Promise<string>, [string]>(str => {
+      call("nyancat");
+      return _func(str);
+    });
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
+    );
+    expect(func).not.toHaveBeenCalled();
+    [, call] = t.result.current;
+    let [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(false);
+
+    act(() => {
+      call("foo");
+    });
+    expect(func).not.toHaveBeenCalled();
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(func).toHaveBeenCalledTimes(1);
+    expect(func).toHaveBeenLastCalledWith("foo");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("");
+    expect(isWaiting).toBe(true);
+
+    resolves[0]("FOO");
+    await t.waitForNextUpdate();
+    expect(func).toHaveBeenCalledTimes(1);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
+
+    call = (_str: string): void => {};
+
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(func).toHaveBeenCalledTimes(2);
+    expect(func).toHaveBeenLastCalledWith("nyancat");
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("FOO");
+    expect(isWaiting).toBe(true);
+
+    resolves[1]("NYANCAT");
+    await t.waitForNextUpdate();
+    expect(func).toHaveBeenCalledTimes(2);
+    [res, , isWaiting] = t.result.current;
+    expect(res).toBe("NYANCAT");
+    expect(isWaiting).toBe(false);
+  });
+
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
       const { func } = createMockFunc();

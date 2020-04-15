@@ -224,15 +224,14 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   });
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
-    triggerCallback: () => {
-      dispatch({ type: "trigger" });
-    },
+    triggerCallback: () => {},
     leadingCallback: args => {
+      dispatch({ type: "trigger" });
       const testShouldCall = testShouldCallRef.current;
       if (leadingRef.current && testShouldCall(args)) {
+        dispatch({ type: "leadingCall", skip: false });
         const call = callRef.current;
         call(args);
-        dispatch({ type: "leadingCall", skip: false });
       } else {
         dispatch({ type: "leadingCall", skip: true });
       }
@@ -240,9 +239,9 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     trailingCallback: (args, count) => {
       const testShouldCall = testShouldCallRef.current;
       if (trailingRef.current && !(leadingRef.current && count === 1) && testShouldCall(args)) {
+        dispatch({ type: "trailingCall", skip: false });
         const call = callRef.current;
         call(args);
-        dispatch({ type: "trailingCall", skip: false });
       } else {
         dispatch({ type: "trailingCall", skip: true });
       }
