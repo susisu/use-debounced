@@ -1,4 +1,4 @@
-import { useRef, useEffect, useReducer, Reducer } from "react";
+import { useRef, useCallback, useEffect, useReducer, Reducer } from "react";
 import { attachActions, CancelFunc } from "@susisu/promise-utils";
 import { useDebouncedPrim } from "./prim";
 
@@ -174,13 +174,8 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
 export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
 ): UseDebouncedAsyncCallResult<R, T> {
-  const funcRef = useRef(options.func);
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
-
-  useEffect(() => {
-    funcRef.current = options.func;
-  }, [options.func]);
 
   const [state, dispatch] = useReducer<Reducer<State<R>, Action<R>>, R | (() => R)>(
     reducer,
@@ -189,56 +184,63 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   );
 
   const cancelAsyncCallRef = useRef<CancelFunc | undefined>(undefined);
-  const callRef = useRef((args: T): void => {
-    if (cancelAsyncCallRef.current) {
-      const cancelAsyncCall = cancelAsyncCallRef.current;
-      cancelAsyncCall();
-      cancelAsyncCallRef.current = undefined;
-    }
-    const func = funcRef.current;
-    [cancelAsyncCallRef.current] = attachActions(
-      func(...args),
-      result => {
+  const call = useCallback(
+    (args: T): void => {
+      if (cancelAsyncCallRef.current) {
+        const cancelAsyncCall = cancelAsyncCallRef.current;
+        cancelAsyncCall();
         cancelAsyncCallRef.current = undefined;
-        dispatch({ type: "fulfill", result });
-      },
-      err => {
-        // eslint-disable-next-line no-console
-        console.error(err);
-        cancelAsyncCallRef.current = undefined;
-        dispatch({ type: "reject" });
       }
-    );
-  });
+      const func = options.func;
+      [cancelAsyncCallRef.current] = attachActions(
+        func(...args),
+        result => {
+          cancelAsyncCallRef.current = undefined;
+          dispatch({ type: "fulfill", result });
+        },
+        err => {
+          // eslint-disable-next-line no-console
+          console.error(err);
+          cancelAsyncCallRef.current = undefined;
+          dispatch({ type: "reject" });
+        }
+      );
+    },
+    [options.func]
+  );
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
-    leadingCallback: args => {
-      dispatch({ type: "start" });
-      if (leadingRef.current) {
-        dispatch({ type: "leadingCall", skip: false });
-        const call = callRef.current;
-        call(args);
-      } else {
-        dispatch({ type: "leadingCall", skip: true });
-      }
-    },
-    trailingCallback: (args, count) => {
-      if (trailingRef.current && !(leadingRef.current && count === 1)) {
-        dispatch({ type: "trailingCall", skip: false });
-        const call = callRef.current;
-        call(args);
-      } else {
-        dispatch({ type: "trailingCall", skip: true });
-      }
-    },
-    cancelCallback: () => {
+    leadingCallback: useCallback(
+      args => {
+        dispatch({ type: "start" });
+        if (leadingRef.current) {
+          dispatch({ type: "leadingCall", skip: false });
+          call(args);
+        } else {
+          dispatch({ type: "leadingCall", skip: true });
+        }
+      },
+      [call]
+    ),
+    trailingCallback: useCallback(
+      (args, count) => {
+        if (trailingRef.current && !(leadingRef.current && count === 1)) {
+          dispatch({ type: "trailingCall", skip: false });
+          call(args);
+        } else {
+          dispatch({ type: "trailingCall", skip: true });
+        }
+      },
+      [call]
+    ),
+    cancelCallback: useCallback(() => {
       if (cancelAsyncCallRef.current) {
         const cancelAsyncCall = cancelAsyncCallRef.current;
         cancelAsyncCall();
         cancelAsyncCallRef.current = undefined;
       }
       dispatch({ type: "cancel" });
-    },
+    }, []),
     wait: options.wait,
     maxWait: options.maxWait,
   });

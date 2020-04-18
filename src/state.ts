@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import { useDebouncedPrim } from "./prim";
 
 export type UseDebouncedStateOptions<T> = Readonly<{
@@ -33,21 +33,21 @@ export function useDebouncedState<T>(
   const [isWaiting, setIsWaiting] = useState(false);
 
   const { trigger: debouncedSetState, cancel, flush } = useDebouncedPrim<readonly [T]>({
-    leadingCallback: ([state]) => {
+    leadingCallback: useCallback(([state]) => {
       setIsWaiting(true);
       if (leadingRef.current) {
         setState(state);
       }
-    },
-    trailingCallback: ([state], count) => {
+    }, []),
+    trailingCallback: useCallback(([state], count) => {
       setIsWaiting(false);
       if (trailingRef.current && !(leadingRef.current && count === 1)) {
         setState(state);
       }
-    },
-    cancelCallback: () => {
+    }, []),
+    cancelCallback: useCallback(() => {
       setIsWaiting(false);
-    },
+    }, []),
     wait: options.wait,
     maxWait: options.maxWait,
   });
