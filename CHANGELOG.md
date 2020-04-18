@@ -1,3 +1,8 @@
+## 0.2.0 (yyyy-mm-dd)
+### Breaking changes
+- Remove `shouldCall` option of `useDebouncedCall` and `useDebouncedAsyncCall`
+  - Use memoized function instead
+
 ## 0.1.2 (2020-04-15)
 ### Bug fixes
 - Fix state of `useDebouncedCall` and `useDebouncedAsyncCall` would get out of sync when debounced call is triggered in the original function.

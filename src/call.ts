@@ -8,7 +8,6 @@ export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<
   maxWait?: number;
   leading?: boolean;
   trailing?: boolean;
-  shouldCall?: (prevArgs: T, args: T) => boolean;
 }>;
 
 export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
@@ -32,42 +31,31 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
   const funcRef = useRef(options.func);
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
-  const shouldCallRef = useRef(options.shouldCall);
 
   useEffect(() => {
     funcRef.current = options.func;
-    shouldCallRef.current = options.shouldCall;
-  }, [options.func, options.shouldCall]);
+  }, [options.func]);
 
   const [result, setResult] = useState<R>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);
 
-  const prevArgsRef = useRef<T | undefined>(undefined);
-  const testShouldCallRef = useRef((args: T): boolean => {
-    const shouldCall = shouldCallRef.current;
-    const prevArgs = prevArgsRef.current;
-    return shouldCall && prevArgs ? shouldCall(prevArgs, args) : true;
-  });
   const callRef = useRef((args: T): void => {
     const func = funcRef.current;
     const result = func(...args);
-    prevArgsRef.current = args;
     setResult(result);
   });
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
     leadingCallback: args => {
       setIsWaiting(true);
-      const testShouldCall = testShouldCallRef.current;
-      if (leadingRef.current && testShouldCall(args)) {
+      if (leadingRef.current) {
         const call = callRef.current;
         call(args);
       }
     },
     trailingCallback: (args, count) => {
       setIsWaiting(false);
-      const testShouldCall = testShouldCallRef.current;
-      if (trailingRef.current && !(leadingRef.current && count === 1) && testShouldCall(args)) {
+      if (trailingRef.current && !(leadingRef.current && count === 1)) {
         const call = callRef.current;
         call(args);
       }
@@ -81,7 +69,6 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
 
   const resetRef = useRef((result: R): void => {
     cancel();
-    prevArgsRef.current = undefined;
     setResult(result);
   });
 

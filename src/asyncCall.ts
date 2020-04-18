@@ -9,7 +9,6 @@ export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Read
   maxWait?: number;
   leading?: boolean;
   trailing?: boolean;
-  shouldCall?: (prevArgs: T, args: T) => boolean;
 }>;
 
 export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
@@ -179,12 +178,10 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   const funcRef = useRef(options.func);
   const leadingRef = useRef(options.leading ?? false);
   const trailingRef = useRef(options.trailing ?? true);
-  const shouldCallRef = useRef(options.shouldCall);
 
   useEffect(() => {
     funcRef.current = options.func;
-    shouldCallRef.current = options.shouldCall;
-  }, [options.func, options.shouldCall]);
+  }, [options.func]);
 
   const [state, dispatch] = useReducer<Reducer<State<R>, Action<R>>, R | (() => R)>(
     reducer,
@@ -192,12 +189,6 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     initializer
   );
 
-  const prevArgsRef = useRef<T | undefined>(undefined);
-  const testShouldCallRef = useRef((args: T): boolean => {
-    const shouldCall = shouldCallRef.current;
-    const prevArgs = prevArgsRef.current;
-    return shouldCall && prevArgs ? shouldCall(prevArgs, args) : true;
-  });
   const cancelAsyncCallRef = useRef<CancelFunc | undefined>(undefined);
   const callRef = useRef((args: T): void => {
     if (cancelAsyncCallRef.current) {
@@ -216,18 +207,15 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
         // eslint-disable-next-line no-console
         console.error(err);
         cancelAsyncCallRef.current = undefined;
-        prevArgsRef.current = undefined;
         dispatch({ type: "reject" });
       }
     );
-    prevArgsRef.current = args;
   });
 
   const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
     leadingCallback: args => {
       dispatch({ type: "start" });
-      const testShouldCall = testShouldCallRef.current;
-      if (leadingRef.current && testShouldCall(args)) {
+      if (leadingRef.current) {
         dispatch({ type: "leadingCall", skip: false });
         const call = callRef.current;
         call(args);
@@ -236,8 +224,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
       }
     },
     trailingCallback: (args, count) => {
-      const testShouldCall = testShouldCallRef.current;
-      if (trailingRef.current && !(leadingRef.current && count === 1) && testShouldCall(args)) {
+      if (trailingRef.current && !(leadingRef.current && count === 1)) {
         dispatch({ type: "trailingCall", skip: false });
         const call = callRef.current;
         call(args);
@@ -250,7 +237,6 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
         const cancelAsyncCall = cancelAsyncCallRef.current;
         cancelAsyncCall();
         cancelAsyncCallRef.current = undefined;
-        prevArgsRef.current = undefined;
       }
       dispatch({ type: "cancel" });
     },
@@ -260,7 +246,6 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
 
   const resetRef = useRef((result: R): void => {
     cancel();
-    prevArgsRef.current = undefined;
     dispatch({ type: "reset", result });
   });
 
@@ -270,7 +255,6 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
         const cancelAsyncCall = cancelAsyncCallRef.current;
         cancelAsyncCall();
         cancelAsyncCallRef.current = undefined;
-        prevArgsRef.current = undefined;
       }
     },
     []
