@@ -52,12 +52,11 @@ const handleStart = <R>(state: State<R>): State<R> => {
   switch (state.type) {
     case "standby":
       return { type: "waiting", result: state.result };
-    case "waiting":
-      return state;
     case "pending":
       return { type: "waiting-pending", result: state.result };
+    case "waiting":
     case "waiting-pending":
-      return state;
+      throw new Error(`unexpected state: ${state.type}`);
   }
 };
 
