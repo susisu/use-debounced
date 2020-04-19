@@ -10,7 +10,7 @@ type UseAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
 type UseAsyncCallResult<R, T extends readonly unknown[]> = [
   R, // result
   (...args: T) => void, // call
-  boolean, // isPending
+  boolean, // isWaiting
   {
     cancel: () => void;
     reset: (result: R) => void;
@@ -24,7 +24,7 @@ function useAsyncCall<R, T extends readonly unknown[]>(
   options: UseAsyncCallOptions<R, T>
 ): UseAsyncCallResult<R, T> {
   const [result, setResult] = useState<R>(options.init);
-  const [isPending, setIsPending] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   const cancelAsyncCallRef = useRef<CancelFunc | undefined>(undefined);
 
@@ -35,20 +35,20 @@ function useAsyncCall<R, T extends readonly unknown[]>(
         cancelAsyncCall();
         cancelAsyncCallRef.current = undefined;
       }
-      setIsPending(true);
+      setIsWaiting(true);
       const func = options.func;
       [cancelAsyncCallRef.current] = attachActions(
         func(...args),
         result => {
           cancelAsyncCallRef.current = undefined;
           setResult(result);
-          setIsPending(false);
+          setIsWaiting(false);
         },
         err => {
           // eslint-disable-next-line no-console
           console.error(err);
           cancelAsyncCallRef.current = undefined;
-          setIsPending(false);
+          setIsWaiting(false);
         }
       );
     },
@@ -61,7 +61,7 @@ function useAsyncCall<R, T extends readonly unknown[]>(
       cancelAsyncCall();
       cancelAsyncCallRef.current = undefined;
     }
-    setIsPending(false);
+    setIsWaiting(false);
   });
 
   const resetRef = useRef((result: R): void => {
@@ -81,7 +81,7 @@ function useAsyncCall<R, T extends readonly unknown[]>(
     []
   );
 
-  return [result, call, isPending, { cancel: cancelRef.current, reset: resetRef.current }];
+  return [result, call, isWaiting, { cancel: cancelRef.current, reset: resetRef.current }];
 }
 
 export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
@@ -112,14 +112,14 @@ export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
 export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
 ): UseDebouncedAsyncCallResult<R, T> {
-  const [result, call, isPending, { cancel: cancelCall, reset: resetCall }] = useAsyncCall({
+  const [result, call, isWaitingCall, { cancel: cancelCall, reset: resetCall }] = useAsyncCall({
     func: options.func,
     init: options.init,
   });
   const [
     ,
     debouncedCall,
-    isWaiting,
+    isWaitingDebounce,
     { cancel: cancelDebounce, reset: resetDebounce, flush },
   ] = useDebouncedCall({
     func: call,
@@ -141,7 +141,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   return [
     result,
     debouncedCall,
-    isWaiting || isPending,
+    isWaitingDebounce || isWaitingCall,
     { cancel: cancelRef.current, reset: resetRef.current, flush },
   ];
 }
