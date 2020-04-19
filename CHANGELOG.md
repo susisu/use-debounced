@@ -1,4 +1,4 @@
-## 0.2.0 (yyyy-mm-dd)
+## 0.2.0 (2020-04-19)
 ### Breaking changes
 - Remove `shouldCall` option of `useDebouncedCall` and `useDebouncedAsyncCall`
   - Use memoized function instead
