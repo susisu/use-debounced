@@ -1,5 +1,5 @@
 ## 0.2.1 (2020-04-19)
-## Bug fixes
+### Bug fixes
 - Avoid flickering state of `useDebouncedAsyncCall`
 
 ## 0.2.0 (2020-04-19)
