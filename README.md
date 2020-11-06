@@ -1,6 +1,6 @@
 # @susisu/use-debounced
 
-[![Build Status](https://travis-ci.com/susisu/use-debounced.svg?branch=master)](https://travis-ci.com/susisu/use-debounced)
+[![CI](https://github.com/susisu/use-debounced/workflows/CI/badge.svg)](https://github.com/susisu/use-debounced/actions?query=workflow%3ACI)
 
 Debounced React Hooks
 
