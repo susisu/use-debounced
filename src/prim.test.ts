@@ -16,9 +16,9 @@ describe("useDebouncedPrim", () => {
     trailingCallback: jest.Mock<void, [[string], number]>;
     cancelCallback: jest.Mock<void, []>;
   } => ({
-    leadingCallback: jest.fn(),
-    trailingCallback: jest.fn(),
-    cancelCallback: jest.fn(),
+    leadingCallback: jest.fn<void, [[string]]>(() => {}),
+    trailingCallback: jest.fn<void, [[string], number]>(() => {}),
+    cancelCallback: jest.fn<void, []>(() => {}),
   });
 
   it("should always return the identical functions", () => {
