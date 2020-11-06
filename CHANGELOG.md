@@ -1,3 +1,6 @@
+## 0.2.2 (2020-11-06)
+- Support React 17
+
 ## 0.2.1 (2020-04-19)
 ### Bug fixes
 - Avoid flickering state of `useDebouncedAsyncCall`
