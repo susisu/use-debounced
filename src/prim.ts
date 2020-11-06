@@ -14,12 +14,17 @@ export type UseDebouncedPrimResult<T extends readonly unknown[]> = {
   flush: () => void;
 };
 
+// NOTE: setTimeout and clearTimeout have different interfaces for browsers and Node.js
+type TimerId = {};
+declare function setTimeout(callback: () => void, ms: number): TimerId;
+declare function clearTimeout(timerId: TimerId): void;
+
 type DebouncedPrimState<T> =
   | Readonly<{ type: "standby" }>
   | Readonly<{
       type: "waiting";
-      timerId: number;
-      maxWaitTimerId: number | undefined;
+      timerId: TimerId;
+      maxWaitTimerId: TimerId | undefined;
       args: T;
       count: number;
     }>;
