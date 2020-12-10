@@ -38,7 +38,7 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
     (args: T): void => {
       const func = options.func;
       const result = func(...args);
-      setResult(result);
+      setResult(() => result);
     },
     [options.func]
   );
@@ -71,7 +71,7 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
 
   const resetRef = useRef((result: R): void => {
     cancel();
-    setResult(result);
+    setResult(() => result);
   });
 
   return [

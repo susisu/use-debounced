@@ -36,13 +36,13 @@ export function useDebouncedState<T>(
     leadingCallback: useCallback(([state]) => {
       setIsWaiting(true);
       if (leadingRef.current) {
-        setState(state);
+        setState(() => state);
       }
     }, []),
     trailingCallback: useCallback(([state], count) => {
       setIsWaiting(false);
       if (trailingRef.current && !(leadingRef.current && count === 1)) {
-        setState(state);
+        setState(() => state);
       }
     }, []),
     cancelCallback: useCallback(() => {
@@ -54,7 +54,7 @@ export function useDebouncedState<T>(
 
   const resetRef = useRef((state: T): void => {
     cancel();
-    setState(state);
+    setState(() => state);
   });
 
   return [
