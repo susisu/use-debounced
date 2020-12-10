@@ -1,3 +1,6 @@
+## 0.2.3 (2020-12-10)
+- Fix `useDebouncedState` and `useDebouncedCall` would wrongly update state if the type of state / result of function call is a function
+
 ## 0.2.2 (2020-11-06)
 - Support React 17
 
