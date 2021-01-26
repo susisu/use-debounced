@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  plugins: ["prettier", "react-hooks", "jest", "jest-formatting"],
+  plugins: ["react-hooks", "jest", "jest-formatting"],
   overrides: [
     {
       files: ["*.{ts,tsx}"],
@@ -22,7 +22,6 @@ module.exports = {
         browser: true,
       },
       rules: {
-        "prettier/prettier": "error",
         "eslint-comments/no-unused-disable": "error",
       },
     },
@@ -52,7 +51,6 @@ module.exports = {
         node: true,
       },
       rules: {
-        "prettier/prettier": "error",
         "eslint-comments/no-unused-disable": "error",
       },
     },
