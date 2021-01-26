@@ -22,6 +22,12 @@ export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
   }
 ];
 
+/**
+ * - "standby" = waiting for call; nothing is going on
+ * - "waiting" = waiting for debounce timeout
+ * - "pending" = waiting for promise to be fulfilled or rejected
+ * - "waiting-pending" = waiting for both debounce timeout and promise
+ */
 type State<R> =
   | Readonly<{ type: "standby"; result: R }>
   | Readonly<{ type: "waiting"; result: R }>
