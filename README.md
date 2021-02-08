@@ -100,15 +100,15 @@ const MyComponent: React.FC = () => {
 };
 ```
 
-### `useDebounce`
-`useDebounce` is a simple hook to create a debounced version of a function.
+### `useDebouncedFunc`
+`useDebouncedFunc` is a simple hook to create a debounced version of a function.
 
 ``` tsx
 import React from "react";
-import { useDebounce } from "@susisu/use-debounced";
+import { useDebouncedFunc } from "@susisu/use-debounced";
 
 const MyComponent: React.FC = () => {
-  const [call] = useDebounce({
+  const [call] = useDebouncedFunc({
     func: value => setRemoteValue(value),
     wait: 1000,
   });

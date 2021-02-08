@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { useDebounce } from "./debounce";
+import { useDebouncedFunc } from "./func";
 
-describe("useDebounce", () => {
+describe("useDebouncedFunc", () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -14,7 +14,7 @@ describe("useDebounce", () => {
   it("should always return the identical functions", () => {
     const func = jest.fn<void, [string]>(() => {});
     const t = renderHook(() =>
-      useDebounce({
+      useDebouncedFunc({
         func,
         wait: 1000,
       })
@@ -31,7 +31,7 @@ describe("useDebounce", () => {
   it("should debounce function calls", () => {
     const func = jest.fn<void, [string]>(() => {});
     const t = renderHook(() =>
-      useDebounce({
+      useDebouncedFunc({
         func,
         wait: 1000,
       })
@@ -61,7 +61,7 @@ describe("useDebounce", () => {
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
     const func = jest.fn<void, [string]>(() => {});
     const t = renderHook(() =>
-      useDebounce({
+      useDebouncedFunc({
         func,
         wait: 1000,
         leading: true,
@@ -93,7 +93,7 @@ describe("useDebounce", () => {
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
     const func = jest.fn<void, [string]>(() => {});
     const t = renderHook(() =>
-      useDebounce({
+      useDebouncedFunc({
         func,
         wait: 1000,
         leading: true,
@@ -126,7 +126,7 @@ describe("useDebounce", () => {
     it("should cancel the waiting function call", () => {
       const func = jest.fn<void, [string]>(() => {});
       const t = renderHook(() =>
-        useDebounce({
+        useDebouncedFunc({
           func,
           wait: 1000,
         })
@@ -149,7 +149,7 @@ describe("useDebounce", () => {
     it("should flush the waiting function call", () => {
       const func = jest.fn<void, [string]>(() => {});
       const t = renderHook(() =>
-        useDebounce({
+        useDebouncedFunc({
           func,
           wait: 1000,
         })

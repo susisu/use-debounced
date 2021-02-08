@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 
-export type UseDebounceOptions<T extends readonly unknown[]> = Readonly<{
+export type UseDebouncedFuncOptions<T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => void;
   wait: number;
   maxWait?: number;
@@ -9,7 +9,7 @@ export type UseDebounceOptions<T extends readonly unknown[]> = Readonly<{
   trailing?: boolean;
 }>;
 
-export type UseDebounceResult<T extends readonly unknown[]> = [
+export type UseDebouncedFuncResult<T extends readonly unknown[]> = [
   call: (...args: T) => void,
   methods: {
     cancel: () => void;
@@ -18,11 +18,11 @@ export type UseDebounceResult<T extends readonly unknown[]> = [
 ];
 
 /**
- * useDebouce creates a debounced version of a function.
+ * useDebouncedFunc creates a debounced version of a function.
  */
-export function useDebounce<T extends readonly unknown[]>(
-  options: UseDebounceOptions<T>
-): UseDebounceResult<T> {
+export function useDebouncedFunc<T extends readonly unknown[]>(
+  options: UseDebouncedFuncOptions<T>
+): UseDebouncedFuncResult<T> {
   const callback = useCallback(
     (args: T, active: boolean): void => {
       if (active) {
