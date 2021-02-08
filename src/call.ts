@@ -1,5 +1,5 @@
 import { useRef, useCallback, useState } from "react";
-import { useDebouncedPrim } from "./prim";
+import { usePrimitiveDebounce } from "./primitive";
 
 export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => R;
@@ -11,10 +11,10 @@ export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<
 }>;
 
 export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
-  R, // result
-  (...args: T) => void, // call (debounced)
-  boolean, // isWaiting
-  {
+  result: R,
+  call: (...args: T) => void,
+  isWaiting: boolean,
+  methods: {
     cancel: () => void;
     reset: (result: R) => void;
     flush: () => void;
@@ -28,9 +28,6 @@ export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
 export function useDebouncedCall<R, T extends readonly unknown[]>(
   options: UseDebouncedCallOptions<R, T>
 ): UseDebouncedCallResult<R, T> {
-  const leadingRef = useRef(options.leading ?? false);
-  const trailingRef = useRef(options.trailing ?? true);
-
   const [result, setResult] = useState<R>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);
 
@@ -43,20 +40,20 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
     [options.func]
   );
 
-  const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
+  const debounce = usePrimitiveDebounce<T>({
     leadingCallback: useCallback(
-      args => {
+      (args, active) => {
         setIsWaiting(true);
-        if (leadingRef.current) {
+        if (active) {
           call(args);
         }
       },
       [call]
     ),
     trailingCallback: useCallback(
-      (args, count) => {
+      (args, active) => {
         setIsWaiting(false);
-        if (trailingRef.current && !(leadingRef.current && count === 1)) {
+        if (active) {
           call(args);
         }
       },
@@ -67,21 +64,35 @@ export function useDebouncedCall<R, T extends readonly unknown[]>(
     }, []),
     wait: options.wait,
     maxWait: options.maxWait,
+    leading: options.leading,
+    trailing: options.trailing,
+  });
+
+  const triggerRef = useRef((...args: T): void => {
+    debounce.trigger(...args);
+  });
+
+  const cancelRef = useRef(() => {
+    debounce.cancel();
   });
 
   const resetRef = useRef((result: R): void => {
-    cancel();
+    debounce.cancel();
     setResult(() => result);
+  });
+
+  const flushRef = useRef(() => {
+    debounce.flush();
   });
 
   return [
     result,
-    debouncedCall,
+    triggerRef.current,
     isWaiting,
     {
-      cancel,
+      cancel: cancelRef.current,
       reset: resetRef.current,
-      flush,
+      flush: flushRef.current,
     },
   ];
 }

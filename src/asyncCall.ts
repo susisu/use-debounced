@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useReducer, Reducer } from "react";
 import { attachActions, CancelFunc } from "@susisu/promise-utils";
-import { useDebouncedPrim } from "./prim";
+import { usePrimitiveDebounce } from "./primitive";
 
 export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => Promise<R>;
@@ -12,10 +12,10 @@ export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Read
 }>;
 
 export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
-  R, // result
-  (...args: T) => void, // call (debounced)
-  boolean, // isWaiting
-  {
+  result: R,
+  call: (...args: T) => void,
+  isWaiting: boolean,
+  methods: {
     cancel: () => void;
     reset: (result: R) => void;
     flush: () => void;
@@ -180,9 +180,6 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
 export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   options: UseDebouncedAsyncCallOptions<R, T>
 ): UseDebouncedAsyncCallResult<R, T> {
-  const leadingRef = useRef(options.leading ?? false);
-  const trailingRef = useRef(options.trailing ?? true);
-
   const [state, dispatch] = useReducer<Reducer<State<R>, Action<R>>, R | (() => R)>(
     reducer,
     options.init,
@@ -215,11 +212,11 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     [options.func]
   );
 
-  const { trigger: debouncedCall, cancel, flush } = useDebouncedPrim<T>({
+  const debounce = usePrimitiveDebounce<T>({
     leadingCallback: useCallback(
-      args => {
+      (args, active) => {
         dispatch({ type: "start" });
-        if (leadingRef.current) {
+        if (active) {
           dispatch({ type: "leadingCall", skip: false });
           call(args);
         } else {
@@ -229,8 +226,8 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
       [call]
     ),
     trailingCallback: useCallback(
-      (args, count) => {
-        if (trailingRef.current && !(leadingRef.current && count === 1)) {
+      (args, active) => {
+        if (active) {
           dispatch({ type: "trailingCall", skip: false });
           call(args);
         } else {
@@ -249,11 +246,25 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     }, []),
     wait: options.wait,
     maxWait: options.maxWait,
+    leading: options.leading,
+    trailing: options.trailing,
+  });
+
+  const triggerRef = useRef((...args: T): void => {
+    debounce.trigger(...args);
+  });
+
+  const cancelRef = useRef(() => {
+    debounce.cancel();
   });
 
   const resetRef = useRef((result: R): void => {
-    cancel();
+    debounce.cancel();
     dispatch({ type: "reset", result });
+  });
+
+  const flushRef = useRef(() => {
+    debounce.flush();
   });
 
   useEffect(
@@ -269,14 +280,15 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
 
   const result = state.result;
   const isWaiting = state.type !== "standby"; // actually isWaitingOrPending
+
   return [
     result,
-    debouncedCall,
+    triggerRef.current,
     isWaiting,
     {
-      cancel,
+      cancel: cancelRef.current,
       reset: resetRef.current,
-      flush,
+      flush: flushRef.current,
     },
   ];
 }

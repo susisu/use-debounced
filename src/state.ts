@@ -1,5 +1,5 @@
 import { useRef, useCallback, useState } from "react";
-import { useDebouncedPrim } from "./prim";
+import { usePrimitiveDebounce } from "./primitive";
 
 export type UseDebouncedStateOptions<T> = Readonly<{
   init: T | (() => T);
@@ -10,10 +10,10 @@ export type UseDebouncedStateOptions<T> = Readonly<{
 }>;
 
 export type UseDebouncedStateResult<T> = [
-  T, // state
-  (state: T) => void, // setState (debounced)
-  boolean, // isWaiting
-  {
+  state: T,
+  setState: (state: T) => void,
+  isWaiting: boolean,
+  methods: {
     cancel: () => void;
     reset: (state: T) => void;
     flush: () => void;
@@ -26,22 +26,19 @@ export type UseDebouncedStateResult<T> = [
 export function useDebouncedState<T>(
   options: UseDebouncedStateOptions<T>
 ): UseDebouncedStateResult<T> {
-  const leadingRef = useRef(options.leading ?? false);
-  const trailingRef = useRef(options.trailing ?? true);
-
   const [state, setState] = useState<T>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);
 
-  const { trigger: debouncedSetState, cancel, flush } = useDebouncedPrim<readonly [T]>({
-    leadingCallback: useCallback(([state]) => {
+  const debounce = usePrimitiveDebounce<readonly [T]>({
+    leadingCallback: useCallback(([state], active) => {
       setIsWaiting(true);
-      if (leadingRef.current) {
+      if (active) {
         setState(() => state);
       }
     }, []),
-    trailingCallback: useCallback(([state], count) => {
+    trailingCallback: useCallback(([state], active) => {
       setIsWaiting(false);
-      if (trailingRef.current && !(leadingRef.current && count === 1)) {
+      if (active) {
         setState(() => state);
       }
     }, []),
@@ -50,21 +47,35 @@ export function useDebouncedState<T>(
     }, []),
     wait: options.wait,
     maxWait: options.maxWait,
+    leading: options.leading,
+    trailing: options.trailing,
+  });
+
+  const triggerRef = useRef((state: T) => {
+    debounce.trigger(state);
+  });
+
+  const cancelRef = useRef(() => {
+    debounce.cancel();
   });
 
   const resetRef = useRef((state: T): void => {
-    cancel();
+    debounce.cancel();
     setState(() => state);
+  });
+
+  const flushRef = useRef(() => {
+    debounce.flush();
   });
 
   return [
     state,
-    debouncedSetState,
+    triggerRef.current,
     isWaiting,
     {
-      cancel,
+      cancel: cancelRef.current,
       reset: resetRef.current,
-      flush,
+      flush: flushRef.current,
     },
   ];
 }

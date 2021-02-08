@@ -531,6 +531,11 @@
     "@typescript-eslint/eslint-plugin" "^4.14.0"
     "@typescript-eslint/parser" "^4.14.0"
 
+"@susisu/primitive-debounce@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@susisu/primitive-debounce/-/primitive-debounce-0.1.0.tgz#4fec9476f58d4bdbc770e33392ebdda101c5df88"
+  integrity sha512-T7eby94I/nLCUTauuNGt1pes2aO2/0LYjZEX0PcvHaL/RAK6gVLZHQF8KW14XlTsvE797u6dq2CDWGUjaT0W5g==
+
 "@susisu/promise-utils@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@susisu/promise-utils/-/promise-utils-0.1.0.tgz#cd01ba6dccf2f5acd9e07866f2d6d1a0b86e0cc0"
