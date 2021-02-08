@@ -5,3 +5,4 @@ export {
   UseDebouncedAsyncCallOptions,
   UseDebouncedAsyncCallResult,
 } from "./asyncCall";
+export { useDebounce, UseDebounceOptions, UseDebounceResult } from "./debounce";

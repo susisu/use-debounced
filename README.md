@@ -100,6 +100,34 @@ const MyComponent: React.FC = () => {
 };
 ```
 
+### `useDebounce`
+`useDebounce` is a simple hook to create a debounced version of a function.
+
+``` tsx
+import React from "react";
+import { useDebounce } from "@susisu/use-debounced";
+
+const MyComponent: React.FC = () => {
+  const [call] = useDebounce({
+    func: value => setRemoteValue(value),
+    wait: 1000,
+  });
+  return (
+    <div>
+      <p>
+        <input
+          type="text"
+          defaultValue=""
+          onChange={e => {
+            call(e.target.value);
+          }}
+        />
+      </p>
+    </div>
+  );
+};
+```
+
 ## License
 
 [MIT License](http://opensource.org/licenses/mit-license.php)
