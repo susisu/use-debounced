@@ -1,3 +1,7 @@
+## 0.3.0 (2021-02-09)
+- Add a new hook `useDebuncedFunc`
+- Refactor the internal implementation
+
 ## 0.2.3 (2020-12-10)
 - Fix `useDebouncedState` and `useDebouncedCall` would wrongly update state if the type of state / result of function call is a function
 
