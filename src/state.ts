@@ -4,9 +4,9 @@ import { usePrimitiveDebounce } from "./primitive";
 export type UseDebouncedStateOptions<T> = Readonly<{
   init: T | (() => T);
   wait: number;
-  maxWait?: number;
-  leading?: boolean;
-  trailing?: boolean;
+  maxWait?: number | undefined;
+  leading?: boolean | undefined;
+  trailing?: boolean | undefined;
 }>;
 
 export type UseDebouncedStateResult<T> = [

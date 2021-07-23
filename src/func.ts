@@ -4,9 +4,9 @@ import { usePrimitiveDebounce } from "./primitive";
 export type UseDebouncedFuncOptions<T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => void;
   wait: number;
-  maxWait?: number;
-  leading?: boolean;
-  trailing?: boolean;
+  maxWait?: number | undefined;
+  leading?: boolean | undefined;
+  trailing?: boolean | undefined;
 }>;
 
 export type UseDebouncedFuncResult<T extends readonly unknown[]> = [

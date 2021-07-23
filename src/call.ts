@@ -5,9 +5,9 @@ export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<
   func: (...args: T) => R;
   init: R | (() => R);
   wait: number;
-  maxWait?: number;
-  leading?: boolean;
-  trailing?: boolean;
+  maxWait?: number | undefined;
+  leading?: boolean | undefined;
+  trailing?: boolean | undefined;
 }>;
 
 export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [

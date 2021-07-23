@@ -6,9 +6,9 @@ export type UseDebouncedPrimOptions<T> = Readonly<{
   trailingCallback: (args: T, active: boolean) => void;
   cancelCallback: () => void;
   wait: number;
-  maxWait?: number;
-  leading?: boolean;
-  trailing?: boolean;
+  maxWait?: number | undefined;
+  leading?: boolean | undefined;
+  trailing?: boolean | undefined;
 }>;
 
 export function usePrimitiveDebounce<T extends readonly unknown[]>(

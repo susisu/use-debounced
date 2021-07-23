@@ -6,9 +6,9 @@ export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Read
   func: (...args: T) => Promise<R>;
   init: R | (() => R);
   wait: number;
-  maxWait?: number;
-  leading?: boolean;
-  trailing?: boolean;
+  maxWait?: number | undefined;
+  leading?: boolean | undefined;
+  trailing?: boolean | undefined;
 }>;
 
 export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
