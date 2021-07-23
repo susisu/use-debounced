@@ -1,3 +1,7 @@
+## 0.3.1 (2021-07-23)
+### Features
+- Add explicit `| undefined` on optional properties in preparation for `--exactOptionalPropertyTypes` in TS 4.4
+
 ## 0.3.0 (2021-02-09)
 - Add a new hook `useDebuncedFunc`
 - Refactor the internal implementation
