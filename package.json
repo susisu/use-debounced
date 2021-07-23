@@ -25,7 +25,7 @@
     "prepublishOnly": "run-s clean lint test build"
   },
   "dependencies": {
-    "@susisu/primitive-debounce": "^0.1.0",
+    "@susisu/primitive-debounce": "^0.2.0",
     "@susisu/promise-utils": "^0.1.0"
   },
   "peerDependencies": {
