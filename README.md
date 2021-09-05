@@ -49,8 +49,8 @@ import { useDebouncedCall } from "@susisu/use-debounced";
 
 const MyComponent: React.FC = () => {
   const [user, call, isWaiting] = useDebouncedCall({
-    func: name => findUser(name) ?? "NOT FOUND",
-    init: "",
+    func: name => findUser(name),
+    init: undefined,
     wait: 1000,
   });
   return (
@@ -64,7 +64,7 @@ const MyComponent: React.FC = () => {
           }}
         />
       </p>
-      <p>{isWaiting ? "..." : user}</p>
+      <p>{isWaiting ? "..." : user?.email}</p>
     </div>
   );
 };
@@ -79,8 +79,8 @@ import { useDebouncedAsyncCall } from "@susisu/use-debounced";
 
 const MyComponent: React.FC = () => {
   const [user, call, isWaiting] = useDebouncedAsyncCall({
-    func: name => fetchUser(name).catch(() => "NOT FOUND"),
-    init: "",
+    func: name => fetchUser(name).catch(() => undefined),
+    init: undefined,
     wait: 1000,
   });
   return (
@@ -94,7 +94,7 @@ const MyComponent: React.FC = () => {
           }}
         />
       </p>
-      <p>{isWaiting ? "..." : user}</p>
+      <p>{isWaiting ? "..." : user?.email}</p>
     </div>
   );
 };
