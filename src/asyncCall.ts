@@ -4,7 +4,7 @@ import { usePrimitiveDebounce } from "./primitive";
 import { unreachable } from "./utils";
 
 export type UseDebouncedAsyncCallOptions<T extends readonly unknown[], R> = Readonly<{
-  func: (...args: T) => Promise<R>;
+  func: (args: T) => Promise<R>;
   init: R | (() => R);
   wait: number;
   maxWait?: number | undefined;
@@ -197,7 +197,7 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
       }
       const func = options.func;
       [cancelAsyncCallRef.current] = attachActions(
-        func(...args),
+        func(args),
         result => {
           cancelAsyncCallRef.current = undefined;
           dispatch({ type: "fulfill", result });

@@ -49,7 +49,7 @@ import { useDebouncedCall } from "@susisu/use-debounced";
 
 const MyComponent: React.FC = () => {
   const [user, call, isWaiting] = useDebouncedCall({
-    func: name => findUser(name),
+    func: ([name]) => findUser(name),
     init: undefined,
     wait: 1000,
   });
@@ -79,7 +79,7 @@ import { useDebouncedAsyncCall } from "@susisu/use-debounced";
 
 const MyComponent: React.FC = () => {
   const [user, call, isWaiting] = useDebouncedAsyncCall({
-    func: name => fetchUser(name).catch(() => undefined),
+    func: ([name]) => fetchUser(name).catch(() => undefined),
     init: undefined,
     wait: 1000,
   });
@@ -109,7 +109,7 @@ import { useDebouncedFunc } from "@susisu/use-debounced";
 
 const MyComponent: React.FC = () => {
   const [call] = useDebouncedFunc({
-    func: value => setRemoteValue(value),
+    func: ([value]) => setRemoteValue(value),
     wait: 1000,
   });
   return (

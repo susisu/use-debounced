@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 
 export type UseDebouncedFuncOptions<T extends readonly unknown[]> = Readonly<{
-  func: (...args: T) => void;
+  func: (args: T) => void;
   wait: number;
   maxWait?: number | undefined;
   leading?: boolean | undefined;
@@ -27,7 +27,7 @@ export function useDebouncedFunc<T extends readonly unknown[]>(
     (args: T, active: boolean): void => {
       if (active) {
         const func = options.func;
-        func(...args);
+        func(args);
       }
     },
     [options.func]

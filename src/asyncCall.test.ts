@@ -18,13 +18,13 @@ describe("useDebouncedAsyncCall", () => {
   });
 
   const createMockFunc = (): {
-    func: jest.Mock<Promise<string>, [string]>;
+    func: jest.Mock<Promise<string>, [[string]]>;
     resolves: ReadonlyArray<ResolveFunc<string>>;
     rejects: readonly RejectFunc[];
   } => {
     const resolves: Array<ResolveFunc<string>> = [];
     const rejects: RejectFunc[] = [];
-    const func = jest.fn<Promise<string>, [string]>(() => {
+    const func = jest.fn<Promise<string>, [[string]]>(() => {
       const [promise, resolve, reject] = triplet<string>();
       resolves.push(resolve);
       rejects.push(reject);
@@ -141,7 +141,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("baz");
+    expect(func).toHaveBeenLastCalledWith(["baz"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -176,7 +176,7 @@ describe("useDebouncedAsyncCall", () => {
       call("foo");
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -218,7 +218,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenLastCalledWith("baz");
+    expect(func).toHaveBeenLastCalledWith(["baz"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("FOO");
     expect(isWaiting).toBe(true);
@@ -254,7 +254,7 @@ describe("useDebouncedAsyncCall", () => {
       call("foo");
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -323,7 +323,7 @@ describe("useDebouncedAsyncCall", () => {
       call("foo");
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -373,7 +373,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -390,7 +390,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenLastCalledWith("bar");
+    expect(func).toHaveBeenLastCalledWith(["bar"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -438,7 +438,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -480,7 +480,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -504,7 +504,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenLastCalledWith("bar");
+    expect(func).toHaveBeenLastCalledWith(["bar"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -520,9 +520,9 @@ describe("useDebouncedAsyncCall", () => {
   it("should be consistent if the debounced call is invoked in the function", async () => {
     let call = (_str: string): void => {};
     const { func: _func, resolves } = createMockFunc();
-    const func = jest.fn<Promise<string>, [string]>(str => {
+    const func = jest.fn<Promise<string>, [[string]]>(args => {
       call("nyancat");
-      return _func(str);
+      return _func(args);
     });
     const t = renderHook(
       () =>
@@ -551,7 +551,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("");
     expect(isWaiting).toBe(true);
@@ -569,7 +569,7 @@ describe("useDebouncedAsyncCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenLastCalledWith("nyancat");
+    expect(func).toHaveBeenLastCalledWith(["nyancat"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("FOO");
     expect(isWaiting).toBe(true);
@@ -654,7 +654,7 @@ describe("useDebouncedAsyncCall", () => {
         jest.advanceTimersByTime(1000);
       });
       expect(func).toHaveBeenCalledTimes(1);
-      expect(func).toHaveBeenLastCalledWith("foo");
+      expect(func).toHaveBeenLastCalledWith(["foo"]);
       [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(true);
@@ -773,7 +773,7 @@ describe("useDebouncedAsyncCall", () => {
         jest.advanceTimersByTime(1000);
       });
       expect(func).toHaveBeenCalledTimes(1);
-      expect(func).toHaveBeenLastCalledWith("foo");
+      expect(func).toHaveBeenLastCalledWith(["foo"]);
       [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(true);
@@ -850,7 +850,7 @@ describe("useDebouncedAsyncCall", () => {
         flush();
       });
       expect(func).toHaveBeenCalledTimes(1);
-      expect(func).toHaveBeenLastCalledWith("foo");
+      expect(func).toHaveBeenLastCalledWith(["foo"]);
       [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(true);

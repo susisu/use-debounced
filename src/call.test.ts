@@ -13,7 +13,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should always return the identical functions", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(
       () =>
         useDebouncedCall({
@@ -34,7 +34,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should initialize the result with the given value", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(
       () =>
         useDebouncedCall({
@@ -49,7 +49,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should initialize the result using the given function", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const init = jest.fn<string, []>(() => "");
     const t = renderHook(
       () =>
@@ -66,7 +66,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should debounce function calls", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(
       () =>
         useDebouncedCall({
@@ -120,14 +120,14 @@ describe("useDebouncedCall", () => {
       jest.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("baz");
+    expect(func).toHaveBeenLastCalledWith(["baz"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("BAZ");
     expect(isWaiting).toBe(false);
   });
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(
       () =>
         useDebouncedCall({
@@ -148,7 +148,7 @@ describe("useDebouncedCall", () => {
       call("foo");
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("FOO");
     expect(isWaiting).toBe(true);
@@ -183,14 +183,14 @@ describe("useDebouncedCall", () => {
       jest.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenLastCalledWith("baz");
+    expect(func).toHaveBeenLastCalledWith(["baz"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("BAZ");
     expect(isWaiting).toBe(false);
   });
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(
       () =>
         useDebouncedCall({
@@ -212,7 +212,7 @@ describe("useDebouncedCall", () => {
       call("foo");
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("FOO");
     expect(isWaiting).toBe(true);
@@ -253,7 +253,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should reset waiting state when leading = true and call is invoked only once", () => {
-    const func = jest.fn<string, [string]>(str => str.toUpperCase());
+    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(
       () =>
         useDebouncedCall({
@@ -274,7 +274,7 @@ describe("useDebouncedCall", () => {
       call("foo");
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("FOO");
     expect(isWaiting).toBe(true);
@@ -290,7 +290,7 @@ describe("useDebouncedCall", () => {
 
   it("should be consistent if the debounced call is invoked in the function", () => {
     let call = (_str: string): void => {};
-    const func = jest.fn<string, [string]>(str => {
+    const func = jest.fn<string, [[string]]>(([str]) => {
       call("nyancat");
       return str.toUpperCase();
     });
@@ -321,7 +321,7 @@ describe("useDebouncedCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
-    expect(func).toHaveBeenLastCalledWith("foo");
+    expect(func).toHaveBeenLastCalledWith(["foo"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("FOO");
     expect(isWaiting).toBe(true);
@@ -332,7 +332,7 @@ describe("useDebouncedCall", () => {
       jest.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(2);
-    expect(func).toHaveBeenLastCalledWith("nyancat");
+    expect(func).toHaveBeenLastCalledWith(["nyancat"]);
     [res, , isWaiting] = t.result.current;
     expect(res).toBe("NYANCAT");
     expect(isWaiting).toBe(false);
@@ -340,7 +340,7 @@ describe("useDebouncedCall", () => {
 
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
-      const func = jest.fn<string, [string]>(str => str.toUpperCase());
+      const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
       const t = renderHook(
         () =>
           useDebouncedCall({
@@ -384,7 +384,7 @@ describe("useDebouncedCall", () => {
 
   describe("reset", () => {
     it("should cancel the waiting function call and set the given value to the result", () => {
-      const func = jest.fn<string, [string]>(str => str.toUpperCase());
+      const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
       const t = renderHook(
         () =>
           useDebouncedCall({
@@ -428,7 +428,7 @@ describe("useDebouncedCall", () => {
 
   describe("flush", () => {
     it("should flush the waiting function call", () => {
-      const func = jest.fn<string, [string]>(str => str.toUpperCase());
+      const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
       const t = renderHook(
         () =>
           useDebouncedCall({
@@ -456,7 +456,7 @@ describe("useDebouncedCall", () => {
         flush();
       });
       expect(func).toHaveBeenCalledTimes(1);
-      expect(func).toHaveBeenLastCalledWith("foo");
+      expect(func).toHaveBeenLastCalledWith(["foo"]);
       [res, , isWaiting] = t.result.current;
       expect(res).toBe("FOO");
       expect(isWaiting).toBe(false);
