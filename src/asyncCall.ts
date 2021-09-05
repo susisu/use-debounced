@@ -250,22 +250,28 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
     trailing: options.trailing,
   });
 
-  const triggerRef = useRef((...args: T): void => {
-    debounce.trigger(...args);
-  });
+  const trigger = useCallback(
+    (...args: T): void => {
+      debounce.trigger(...args);
+    },
+    [debounce]
+  );
 
-  const cancelRef = useRef(() => {
+  const cancel = useCallback(() => {
     debounce.cancel();
-  });
+  }, [debounce]);
 
-  const resetRef = useRef((result: R): void => {
-    debounce.cancel();
-    dispatch({ type: "reset", result });
-  });
+  const reset = useCallback(
+    (result: R): void => {
+      debounce.cancel();
+      dispatch({ type: "reset", result });
+    },
+    [debounce]
+  );
 
-  const flushRef = useRef(() => {
+  const flush = useCallback(() => {
     debounce.flush();
-  });
+  }, [debounce]);
 
   useEffect(
     () => () => {
@@ -279,16 +285,7 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   );
 
   const result = state.result;
-  const isWaiting = state.type !== "standby"; // actually isWaitingOrPending
+  const isWaitingOrPending = state.type !== "standby";
 
-  return [
-    result,
-    triggerRef.current,
-    isWaiting,
-    {
-      cancel: cancelRef.current,
-      reset: resetRef.current,
-      flush: flushRef.current,
-    },
-  ];
+  return [result, trigger, isWaitingOrPending, { cancel, reset, flush }];
 }

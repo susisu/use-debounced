@@ -1,5 +1,5 @@
 import { Debounce } from "@susisu/primitive-debounce";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type UseDebouncedPrimOptions<T> = Readonly<{
   leadingCallback: (args: T, active: boolean) => void;
@@ -24,34 +24,34 @@ export function usePrimitiveDebounce<T extends readonly unknown[]>(
     cancelCallbackRef.current = options.cancelCallback;
   }, [options.leadingCallback, options.trailingCallback, options.cancelCallback]);
 
-  const debounceRef = useRef<Debounce<T> | undefined>(undefined);
-  if (debounceRef.current === undefined) {
-    debounceRef.current = new Debounce({
-      leadingCallback: (args, active) => {
-        const leadingCallback = leadingCallbackRef.current;
-        leadingCallback(args, active);
-      },
-      trailingCallback: (args, active) => {
-        const trailingCallback = trailingCallbackRef.current;
-        trailingCallback(args, active);
-      },
-      cancelCallback: () => {
-        const cancelCallback = cancelCallbackRef.current;
-        cancelCallback();
-      },
-      wait: options.wait,
-      maxWait: options.maxWait,
-      leading: options.leading ?? false,
-      trailing: options.trailing ?? true,
-    });
-  }
+  const [debounce] = useState<Debounce<T>>(
+    () =>
+      new Debounce({
+        leadingCallback: (args, active) => {
+          const leadingCallback = leadingCallbackRef.current;
+          leadingCallback(args, active);
+        },
+        trailingCallback: (args, active) => {
+          const trailingCallback = trailingCallbackRef.current;
+          trailingCallback(args, active);
+        },
+        cancelCallback: () => {
+          const cancelCallback = cancelCallbackRef.current;
+          cancelCallback();
+        },
+        wait: options.wait,
+        maxWait: options.maxWait,
+        leading: options.leading ?? false,
+        trailing: options.trailing ?? true,
+      })
+  );
 
   useEffect(
     () => () => {
-      debounceRef.current?.dispose();
+      debounce.dispose();
     },
-    []
+    [debounce]
   );
 
-  return debounceRef.current;
+  return debounce;
 }
