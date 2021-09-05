@@ -33,27 +33,6 @@ describe("useDebouncedAsyncCall", () => {
     return { func, resolves, rejects };
   };
 
-  it("should always return the identical functions", () => {
-    const { func } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
-    );
-    const [, call1, , r1] = t.result.current;
-
-    t.rerender();
-    const [, call2, , r2] = t.result.current;
-    expect(call2).toBe(call1);
-    expect(r2.cancel).toBe(r1.cancel);
-    expect(r2.reset).toBe(r1.reset);
-    expect(r2.flush).toBe(r1.flush);
-  });
-
   it("should initialize the result with the given value", () => {
     const { func } = createMockFunc();
     const t = renderHook(

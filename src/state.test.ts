@@ -12,25 +12,6 @@ describe("useDebouncedState", () => {
     jest.useRealTimers();
   });
 
-  it("should always return the identical functions", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
-    );
-    const [, setState1, , r1] = t.result.current;
-
-    t.rerender();
-    const [, setState2, , r2] = t.result.current;
-    expect(setState2).toBe(setState1);
-    expect(r2.cancel).toBe(r1.cancel);
-    expect(r2.reset).toBe(r1.reset);
-    expect(r2.flush).toBe(r1.flush);
-  });
-
   it("should initialize the state with the given value", () => {
     const t = renderHook(
       () =>

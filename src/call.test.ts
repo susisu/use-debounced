@@ -12,27 +12,6 @@ describe("useDebouncedCall", () => {
     jest.useRealTimers();
   });
 
-  it("should always return the identical functions", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
-    );
-    const [, call1, , r1] = t.result.current;
-
-    t.rerender();
-    const [, call2, , r2] = t.result.current;
-    expect(call2).toBe(call1);
-    expect(r2.cancel).toBe(r1.cancel);
-    expect(r2.reset).toBe(r1.reset);
-    expect(r2.flush).toBe(r1.flush);
-  });
-
   it("should initialize the result with the given value", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const t = renderHook(

@@ -12,25 +12,6 @@ describe("useDebouncedFunc", () => {
     jest.useRealTimers();
   });
 
-  it("should always return the identical functions", () => {
-    const func = jest.fn<void, [[string]]>(() => {});
-    const t = renderHook(
-      () =>
-        useDebouncedFunc({
-          func,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
-    );
-    const [call1, r1] = t.result.current;
-
-    t.rerender();
-    const [call2, r2] = t.result.current;
-    expect(call2).toBe(call1);
-    expect(r2.cancel).toBe(r1.cancel);
-    expect(r2.flush).toBe(r1.flush);
-  });
-
   it("should debounce function calls", () => {
     const func = jest.fn<void, [[string]]>(() => {});
     const t = renderHook(
