@@ -1,6 +1,7 @@
 import { useRef, useCallback, useEffect, useReducer, Reducer } from "react";
 import { attachActions, CancelFunc } from "@susisu/promise-utils";
 import { usePrimitiveDebounce } from "./primitive";
+import { unreachable } from "./utils";
 
 export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
   func: (...args: T) => Promise<R>;
@@ -52,9 +53,7 @@ const initializer = <R>(init: R | (() => R)): State<R> => {
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleStart = <R>(state: State<R>): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     case "standby":
       return { type: "waiting", result: state.result };
@@ -63,12 +62,12 @@ const handleStart = <R>(state: State<R>): State<R> => {
     case "waiting":
     case "waiting-pending":
       throw new Error(`unexpected state: ${state.type}`);
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleLeadingCall = <R>(state: State<R>, skip: boolean): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     case "waiting":
       return skip ? state : { type: "waiting-pending", result: state.result };
@@ -77,12 +76,12 @@ const handleLeadingCall = <R>(state: State<R>, skip: boolean): State<R> => {
     case "standby":
     case "pending":
       throw new Error(`unexpected state: ${state.type}`);
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleTrailingCall = <R>(state: State<R>, skip: boolean): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     case "waiting":
       return skip
@@ -93,12 +92,12 @@ const handleTrailingCall = <R>(state: State<R>, skip: boolean): State<R> => {
     case "standby":
     case "pending":
       throw new Error(`unexpected state: ${state.type}`);
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleFulfill = <R>(state: State<R>, result: R): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     case "pending":
       return { type: "standby", result };
@@ -107,12 +106,12 @@ const handleFulfill = <R>(state: State<R>, result: R): State<R> => {
     case "standby":
     case "waiting":
       throw new Error(`unexpected state: ${state.type}`);
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleReject = <R>(state: State<R>): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     case "pending":
       return { type: "standby", result: state.result };
@@ -121,12 +120,12 @@ const handleReject = <R>(state: State<R>): State<R> => {
     case "standby":
     case "waiting":
       throw new Error(`unexpected state: ${state.type}`);
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleCancel = <R>(state: State<R>): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     case "standby":
       return state;
@@ -134,12 +133,12 @@ const handleCancel = <R>(state: State<R>): State<R> => {
     case "pending":
     case "waiting-pending":
       return { type: "standby", result: state.result };
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const handleReset = <R>(state: State<R>, result: R): State<R> => {
-  // eslint-disable-next-line default-case
   switch (state.type) {
     // assuming it has already been cancelled
     case "standby":
@@ -148,12 +147,12 @@ const handleReset = <R>(state: State<R>, result: R): State<R> => {
     case "pending":
     case "waiting-pending":
       throw new Error(`unexpected state: ${state.type}`);
+    default:
+      return unreachable(state);
   }
 };
 
-// eslint-disable-next-line consistent-return
 const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
-  // eslint-disable-next-line default-case
   switch (action.type) {
     case "start":
       return handleStart(state);
@@ -169,6 +168,8 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
       return handleCancel(state);
     case "reset":
       return handleReset(state, action.result);
+    default:
+      return unreachable(action);
   }
 };
 
