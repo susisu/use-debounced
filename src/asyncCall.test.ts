@@ -1,6 +1,6 @@
+import { RejectFunc, ResolveFunc, triplet } from "@susisu/promise-utils";
+import { act, renderHook } from "@testing-library/react-hooks";
 import { StrictMode } from "react";
-import { renderHook, act } from "@testing-library/react-hooks";
-import { triplet, ResolveFunc, RejectFunc } from "@susisu/promise-utils";
 import { useDebouncedAsyncCall } from "./asyncCall";
 
 describe("useDebouncedAsyncCall", () => {

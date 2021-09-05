@@ -1,5 +1,5 @@
-import { StrictMode } from "react";
 import { renderHook } from "@testing-library/react-hooks";
+import { StrictMode } from "react";
 import { useDebouncedFunc } from "./func";
 
 describe("useDebouncedFunc", () => {

@@ -1,5 +1,5 @@
-import { useRef, useCallback, useReducer, Reducer } from "react";
-import { attachActions, CancelFunc } from "@susisu/promise-utils";
+import { CancelFunc, attachActions } from "@susisu/promise-utils";
+import { Reducer, useCallback, useReducer, useRef } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 import { unreachable } from "./utils";
 

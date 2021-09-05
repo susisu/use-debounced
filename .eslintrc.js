@@ -1,14 +1,15 @@
 "use strict";
 
 module.exports = {
-  plugins: ["react-hooks", "jest", "jest-formatting"],
+  plugins: ["import", "react-hooks", "jest", "jest-formatting"],
   overrides: [
     {
       files: ["*.{ts,tsx}"],
       extends: [
         "@susisu/eslint-config/preset/ts-types",
-        "plugin:react-hooks/recommended",
         "plugin:eslint-comments/recommended",
+        "plugin:import/typescript",
+        "plugin:react-hooks/recommended",
         "prettier",
       ],
       parserOptions: {
@@ -21,7 +22,11 @@ module.exports = {
         browser: true,
       },
       rules: {
+        "sort-imports": ["error", { ignoreDeclarationSort: true }],
         "eslint-comments/no-unused-disable": "error",
+        "import/no-default-export": "error",
+        "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
+        "import/order": ["error", { alphabetize: { order: "asc" } }],
       },
     },
     {

@@ -1,5 +1,5 @@
+import { act, renderHook } from "@testing-library/react-hooks";
 import { StrictMode } from "react";
-import { renderHook, act } from "@testing-library/react-hooks";
 import { useDebouncedState } from "./state";
 
 describe("useDebouncedState", () => {

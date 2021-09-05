@@ -1,6 +1,6 @@
-import { StrictMode } from "react";
 import { Debounce } from "@susisu/primitive-debounce";
 import { renderHook } from "@testing-library/react-hooks";
+import { StrictMode } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 
 describe("usePrimitiveDebounce", () => {
