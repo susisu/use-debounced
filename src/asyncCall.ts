@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect, useReducer, Reducer } from "react";
+import { useRef, useCallback, useReducer, Reducer } from "react";
 import { attachActions, CancelFunc } from "@susisu/promise-utils";
 import { usePrimitiveDebounce } from "./primitive";
 import { unreachable } from "./utils";
@@ -273,17 +273,6 @@ export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
   const flush = useCallback(() => {
     debounce.flush();
   }, [debounce]);
-
-  useEffect(
-    () => () => {
-      if (cancelAsyncCallRef.current) {
-        const cancelAsyncCall = cancelAsyncCallRef.current;
-        cancelAsyncCall();
-        cancelAsyncCallRef.current = undefined;
-      }
-    },
-    []
-  );
 
   const result = state.result;
   const isWaitingOrPending = state.type !== "standby";

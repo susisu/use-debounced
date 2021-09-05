@@ -55,15 +55,31 @@ describe("usePrimitiveDebounce", () => {
     t.rerender(callbacks2);
 
     t.result.current.trigger("foo");
-    expect(callbacks1.leadingCallback).toHaveBeenCalledTimes(0);
+    expect(callbacks1.leadingCallback).not.toHaveBeenCalled();
     expect(callbacks2.leadingCallback).toHaveBeenCalledTimes(1);
 
     jest.advanceTimersByTime(1000);
-    expect(callbacks1.trailingCallback).toHaveBeenCalledTimes(0);
+    expect(callbacks1.trailingCallback).not.toHaveBeenCalled();
     expect(callbacks2.trailingCallback).toHaveBeenCalledTimes(1);
 
     t.result.current.cancel();
-    expect(callbacks1.cancelCallback).toHaveBeenCalledTimes(0);
+    expect(callbacks1.cancelCallback).not.toHaveBeenCalled();
     expect(callbacks2.cancelCallback).toHaveBeenCalledTimes(1);
+  });
+
+  it("should cancel when the component is unmounted", () => {
+    const callbacks = createMockCallbacks();
+    const t = renderHook(
+      () =>
+        usePrimitiveDebounce({
+          ...callbacks,
+          wait: 1000,
+        }),
+      { wrapper: StrictMode }
+    );
+    expect(callbacks.cancelCallback).not.toHaveBeenCalled();
+
+    t.unmount();
+    expect(callbacks.cancelCallback).toHaveBeenCalledTimes(1);
   });
 });
