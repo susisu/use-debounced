@@ -1,9 +1,9 @@
-export { useDebouncedState, UseDebouncedStateOptions, UseDebouncedStateResult } from "./state";
-export { useDebouncedCall, UseDebouncedCallOptions, UseDebouncedCallResult } from "./call";
+export { UseDebouncedStateOptions, UseDebouncedStateResult, useDebouncedState } from "./state";
+export { UseDebouncedCallOptions, UseDebouncedCallResult, useDebouncedCall } from "./call";
 export {
-  useDebouncedAsyncCall,
+  UseDebouncedAsyncCallFuncOptions,
   UseDebouncedAsyncCallOptions,
   UseDebouncedAsyncCallResult,
-  UseDebouncedAsyncCallFuncOptions,
+  useDebouncedAsyncCall,
 } from "./asyncCall";
-export { useDebouncedFunc, UseDebouncedFuncOptions, UseDebouncedFuncResult } from "./func";
+export { UseDebouncedFuncOptions, UseDebouncedFuncResult, useDebouncedFunc } from "./func";
