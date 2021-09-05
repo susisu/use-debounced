@@ -3,7 +3,7 @@ import { attachActions, CancelFunc } from "@susisu/promise-utils";
 import { usePrimitiveDebounce } from "./primitive";
 import { unreachable } from "./utils";
 
-export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Readonly<{
+export type UseDebouncedAsyncCallOptions<T extends readonly unknown[], R> = Readonly<{
   func: (...args: T) => Promise<R>;
   init: R | (() => R);
   wait: number;
@@ -12,7 +12,7 @@ export type UseDebouncedAsyncCallOptions<R, T extends readonly unknown[]> = Read
   trailing?: boolean | undefined;
 }>;
 
-export type UseDebouncedAsyncCallResult<R, T extends readonly unknown[]> = [
+export type UseDebouncedAsyncCallResult<T extends readonly unknown[], R> = [
   result: R,
   call: (...args: T) => void,
   isWaiting: boolean,
@@ -178,9 +178,9 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
  * When the given function is invoked after timeout and it is fulfilled, the result will be set to
  * the state.
  */
-export function useDebouncedAsyncCall<R, T extends readonly unknown[]>(
-  options: UseDebouncedAsyncCallOptions<R, T>
-): UseDebouncedAsyncCallResult<R, T> {
+export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
+  options: UseDebouncedAsyncCallOptions<T, R>
+): UseDebouncedAsyncCallResult<T, R> {
   const [state, dispatch] = useReducer<Reducer<State<R>, Action<R>>, R | (() => R)>(
     reducer,
     options.init,

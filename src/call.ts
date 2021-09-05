@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 
-export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<{
+export type UseDebouncedCallOptions<T extends readonly unknown[], R> = Readonly<{
   func: (...args: T) => R;
   init: R | (() => R);
   wait: number;
@@ -10,7 +10,7 @@ export type UseDebouncedCallOptions<R, T extends readonly unknown[]> = Readonly<
   trailing?: boolean | undefined;
 }>;
 
-export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
+export type UseDebouncedCallResult<T extends readonly unknown[], R> = [
   result: R,
   call: (...args: T) => void,
   isWaiting: boolean,
@@ -25,9 +25,9 @@ export type UseDebouncedCallResult<R, T extends readonly unknown[]> = [
  * useDebouncedCall debounces synchronous function calls.
  * When the given function is invoked after timeout, the result will be set to the state.
  */
-export function useDebouncedCall<R, T extends readonly unknown[]>(
-  options: UseDebouncedCallOptions<R, T>
-): UseDebouncedCallResult<R, T> {
+export function useDebouncedCall<T extends readonly unknown[], R>(
+  options: UseDebouncedCallOptions<T, R>
+): UseDebouncedCallResult<T, R> {
   const [result, setResult] = useState<R>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);
 
