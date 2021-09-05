@@ -260,31 +260,34 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
     trailing: options.trailing,
   });
 
-  const trigger = useCallback(
-    (...args: T): void => {
-      debounce.trigger(...args);
-    },
-    [debounce]
-  );
+  const triggerRef = useRef((...args: T): void => {
+    debounce.trigger(...args);
+  });
 
-  const cancel = useCallback(() => {
+  const cancelRef = useRef(() => {
     debounce.cancel();
-  }, [debounce]);
+  });
 
-  const reset = useCallback(
-    (result: R): void => {
-      debounce.cancel();
-      dispatch({ type: "reset", result });
-    },
-    [debounce]
-  );
+  const resetRef = useRef((result: R): void => {
+    debounce.cancel();
+    dispatch({ type: "reset", result });
+  });
 
-  const flush = useCallback(() => {
+  const flushRef = useRef(() => {
     debounce.flush();
-  }, [debounce]);
+  });
 
   const result = state.result;
   const isWaitingOrPending = state.type !== "standby";
 
-  return [result, trigger, isWaitingOrPending, { cancel, reset, flush }];
+  return [
+    result,
+    triggerRef.current,
+    isWaitingOrPending,
+    {
+      cancel: cancelRef.current,
+      reset: resetRef.current,
+      flush: flushRef.current,
+    },
+  ];
 }

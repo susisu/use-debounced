@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 
 export type UseDebouncedCallOptions<T extends readonly unknown[], R> = Readonly<{
@@ -68,28 +68,31 @@ export function useDebouncedCall<T extends readonly unknown[], R>(
     trailing: options.trailing,
   });
 
-  const trigger = useCallback(
-    (...args: T): void => {
-      debounce.trigger(...args);
-    },
-    [debounce]
-  );
+  const triggerRef = useRef((...args: T): void => {
+    debounce.trigger(...args);
+  });
 
-  const cancel = useCallback(() => {
+  const cancelRef = useRef(() => {
     debounce.cancel();
-  }, [debounce]);
+  });
 
-  const reset = useCallback(
-    (result: R): void => {
-      debounce.cancel();
-      setResult(() => result);
-    },
-    [debounce]
-  );
+  const resetRef = useRef((result: R): void => {
+    debounce.cancel();
+    setResult(() => result);
+  });
 
-  const flush = useCallback(() => {
+  const flushRef = useRef(() => {
     debounce.flush();
-  }, [debounce]);
+  });
 
-  return [result, trigger, isWaiting, { cancel, reset, flush }];
+  return [
+    result,
+    triggerRef.current,
+    isWaiting,
+    {
+      cancel: cancelRef.current,
+      reset: resetRef.current,
+      flush: flushRef.current,
+    },
+  ];
 }
