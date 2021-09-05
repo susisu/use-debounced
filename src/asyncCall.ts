@@ -1,15 +1,19 @@
-import { CancelFunc, attachActions } from "@susisu/promise-utils";
+import { attachActions } from "@susisu/promise-utils";
 import { Reducer, useCallback, useReducer, useRef } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 import { unreachable } from "./utils";
 
 export type UseDebouncedAsyncCallOptions<T extends readonly unknown[], R> = Readonly<{
-  func: (args: T) => Promise<R>;
+  func: (args: T, options: UseDebouncedAsyncCallFuncOptions) => Promise<R>;
   init: R | (() => R);
   wait: number;
   maxWait?: number | undefined;
   leading?: boolean | undefined;
   trailing?: boolean | undefined;
+}>;
+
+export type UseDebouncedAsyncCallFuncOptions = Readonly<{
+  signal: AbortSignal;
 }>;
 
 export type UseDebouncedAsyncCallResult<T extends readonly unknown[], R> = [
@@ -187,7 +191,7 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
     initializer
   );
 
-  const cancelAsyncCallRef = useRef<CancelFunc | undefined>(undefined);
+  const cancelAsyncCallRef = useRef<(() => void) | undefined>(undefined);
   const call = useCallback(
     (args: T): void => {
       if (cancelAsyncCallRef.current) {
@@ -196,8 +200,9 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
         cancelAsyncCallRef.current = undefined;
       }
       const func = options.func;
-      [cancelAsyncCallRef.current] = attachActions(
-        func(args),
+      const controller = new AbortController();
+      const [cancelPromise] = attachActions(
+        func(args, { signal: controller.signal }),
         result => {
           cancelAsyncCallRef.current = undefined;
           dispatch({ type: "fulfill", result });
@@ -209,6 +214,10 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
           dispatch({ type: "reject" });
         }
       );
+      cancelAsyncCallRef.current = () => {
+        cancelPromise();
+        controller.abort();
+      };
     },
     [options.func]
   );

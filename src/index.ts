@@ -4,5 +4,6 @@ export {
   useDebouncedAsyncCall,
   UseDebouncedAsyncCallOptions,
   UseDebouncedAsyncCallResult,
+  UseDebouncedAsyncCallFuncOptions,
 } from "./asyncCall";
 export { useDebouncedFunc, UseDebouncedFuncOptions, UseDebouncedFuncResult } from "./func";
