@@ -1,6 +1,5 @@
 import { Debounce } from "@susisu/primitive-debounce";
 import { renderHook } from "@testing-library/react-hooks";
-import { StrictMode } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 
 describe("usePrimitiveDebounce", () => {
@@ -25,13 +24,11 @@ describe("usePrimitiveDebounce", () => {
 
   it("should create and hold an instance of Debounce", () => {
     const callbacks = createMockCallbacks();
-    const t = renderHook(
-      () =>
-        usePrimitiveDebounce({
-          ...callbacks,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      usePrimitiveDebounce({
+        ...callbacks,
+        wait: 1000,
+      })
     );
     expect(t.result.current).toBeInstanceOf(Debounce);
     const debounce = t.result.current;
@@ -48,7 +45,7 @@ describe("usePrimitiveDebounce", () => {
           ...callbacks,
           wait: 1000,
         }),
-      { wrapper: StrictMode, initialProps: callbacks1 }
+      { initialProps: callbacks1 }
     );
 
     const callbacks2 = createMockCallbacks();
@@ -69,13 +66,11 @@ describe("usePrimitiveDebounce", () => {
 
   it("should cancel when the component is unmounted", () => {
     const callbacks = createMockCallbacks();
-    const t = renderHook(
-      () =>
-        usePrimitiveDebounce({
-          ...callbacks,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      usePrimitiveDebounce({
+        ...callbacks,
+        wait: 1000,
+      })
     );
     expect(callbacks.cancelCallback).not.toHaveBeenCalled();
 

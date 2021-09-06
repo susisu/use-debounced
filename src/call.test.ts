@@ -1,5 +1,4 @@
 import { act, renderHook } from "@testing-library/react-hooks";
-import { StrictMode } from "react";
 import { useDebouncedCall } from "./call";
 
 describe("useDebouncedCall", () => {
@@ -14,14 +13,12 @@ describe("useDebouncedCall", () => {
 
   it("should always return the identical functions", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     const [, call1, , r1] = t.result.current;
 
@@ -35,14 +32,12 @@ describe("useDebouncedCall", () => {
 
   it("should initialize the result with the given value", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     const [res] = t.result.current;
     expect(res).toBe("");
@@ -51,14 +46,12 @@ describe("useDebouncedCall", () => {
   it("should initialize the result using the given function", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const init = jest.fn<string, []>(() => "");
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init,
+        wait: 1000,
+      })
     );
     expect(init).toHaveBeenCalled();
     const [res] = t.result.current;
@@ -67,14 +60,12 @@ describe("useDebouncedCall", () => {
 
   it("should debounce function calls", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -128,15 +119,13 @@ describe("useDebouncedCall", () => {
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+        leading: true,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -191,16 +180,14 @@ describe("useDebouncedCall", () => {
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-          leading: true,
-          trailing: false,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+        leading: true,
+        trailing: false,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -254,15 +241,13 @@ describe("useDebouncedCall", () => {
 
   it("should reset waiting state when leading = true and call is invoked only once", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+        leading: true,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -294,14 +279,12 @@ describe("useDebouncedCall", () => {
       call("nyancat");
       return str.toUpperCase();
     });
-    const t = renderHook(
-      () =>
-        useDebouncedCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     [, call] = t.result.current;
@@ -341,14 +324,12 @@ describe("useDebouncedCall", () => {
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
       const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-      const t = renderHook(
-        () =>
-          useDebouncedCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { cancel }] = t.result.current;
@@ -385,14 +366,12 @@ describe("useDebouncedCall", () => {
   describe("reset", () => {
     it("should cancel the waiting function call and set the given value to the result", () => {
       const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-      const t = renderHook(
-        () =>
-          useDebouncedCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { reset }] = t.result.current;
@@ -429,14 +408,12 @@ describe("useDebouncedCall", () => {
   describe("flush", () => {
     it("should flush the waiting function call", () => {
       const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-      const t = renderHook(
-        () =>
-          useDebouncedCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { flush }] = t.result.current;

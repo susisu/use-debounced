@@ -1,5 +1,4 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { StrictMode } from "react";
 import { useDebouncedFunc } from "./func";
 
 describe("useDebouncedFunc", () => {
@@ -14,13 +13,11 @@ describe("useDebouncedFunc", () => {
 
   it("should always return the identical functions", () => {
     const func = jest.fn<void, [[string]]>(() => {});
-    const t = renderHook(
-      () =>
-        useDebouncedFunc({
-          func,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedFunc({
+        func,
+        wait: 1000,
+      })
     );
     const [call1, r1] = t.result.current;
 
@@ -33,13 +30,11 @@ describe("useDebouncedFunc", () => {
 
   it("should debounce function calls", () => {
     const func = jest.fn<void, [[string]]>(() => {});
-    const t = renderHook(
-      () =>
-        useDebouncedFunc({
-          func,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedFunc({
+        func,
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [call] = t.result.current;
@@ -65,14 +60,12 @@ describe("useDebouncedFunc", () => {
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
     const func = jest.fn<void, [[string]]>(() => {});
-    const t = renderHook(
-      () =>
-        useDebouncedFunc({
-          func,
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedFunc({
+        func,
+        wait: 1000,
+        leading: true,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [call] = t.result.current;
@@ -99,15 +92,13 @@ describe("useDebouncedFunc", () => {
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
     const func = jest.fn<void, [[string]]>(() => {});
-    const t = renderHook(
-      () =>
-        useDebouncedFunc({
-          func,
-          wait: 1000,
-          leading: true,
-          trailing: false,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedFunc({
+        func,
+        wait: 1000,
+        leading: true,
+        trailing: false,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [call] = t.result.current;
@@ -134,13 +125,11 @@ describe("useDebouncedFunc", () => {
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
       const func = jest.fn<void, [[string]]>(() => {});
-      const t = renderHook(
-        () =>
-          useDebouncedFunc({
-            func,
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedFunc({
+          func,
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [call, { cancel }] = t.result.current;
@@ -159,13 +148,11 @@ describe("useDebouncedFunc", () => {
   describe("flush", () => {
     it("should flush the waiting function call", () => {
       const func = jest.fn<void, [[string]]>(() => {});
-      const t = renderHook(
-        () =>
-          useDebouncedFunc({
-            func,
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedFunc({
+          func,
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [call, { flush }] = t.result.current;

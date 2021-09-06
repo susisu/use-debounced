@@ -1,5 +1,4 @@
 import { act, renderHook } from "@testing-library/react-hooks";
-import { StrictMode } from "react";
 import { useDebouncedState } from "./state";
 
 describe("useDebouncedState", () => {
@@ -13,13 +12,11 @@ describe("useDebouncedState", () => {
   });
 
   it("should always return the identical functions", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init: "",
+        wait: 1000,
+      })
     );
     const [, setState1, , r1] = t.result.current;
 
@@ -32,13 +29,11 @@ describe("useDebouncedState", () => {
   });
 
   it("should initialize the state with the given value", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init: "",
+        wait: 1000,
+      })
     );
     const [state] = t.result.current;
     expect(state).toBe("");
@@ -46,13 +41,11 @@ describe("useDebouncedState", () => {
 
   it("should initialize the state using the given function", () => {
     const init = jest.fn<string, []>(() => "");
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init,
+        wait: 1000,
+      })
     );
     const [state] = t.result.current;
     expect(init).toHaveBeenCalled();
@@ -60,13 +53,11 @@ describe("useDebouncedState", () => {
   });
 
   it("should debounce state update", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init: "",
+        wait: 1000,
+      })
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -112,14 +103,12 @@ describe("useDebouncedState", () => {
   });
 
   it("should update the state on the leading edge of timeout if leading = true is specified", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init: "",
+        wait: 1000,
+        leading: true,
+      })
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -165,15 +154,13 @@ describe("useDebouncedState", () => {
   });
 
   it("should not update the state on the trailing edge of timeout if trailing = false is specified", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-          leading: true,
-          trailing: false,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init: "",
+        wait: 1000,
+        leading: true,
+        trailing: false,
+      })
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -219,14 +206,12 @@ describe("useDebouncedState", () => {
   });
 
   it("should correctly reset waiting state when leading = true and setState is invoked only once", () => {
-    const t = renderHook(
-      () =>
-        useDebouncedState({
-          init: "",
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedState({
+        init: "",
+        wait: 1000,
+        leading: true,
+      })
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -250,13 +235,11 @@ describe("useDebouncedState", () => {
 
   describe("cancel", () => {
     it("should cancel the waiting state update", () => {
-      const t = renderHook(
-        () =>
-          useDebouncedState({
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedState({
+          init: "",
+          wait: 1000,
+        })
       );
       const [, setState, , { cancel }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
@@ -288,13 +271,11 @@ describe("useDebouncedState", () => {
 
   describe("reset", () => {
     it("should cancel the waiting state update and set the given value to the state", () => {
-      const t = renderHook(
-        () =>
-          useDebouncedState({
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedState({
+          init: "",
+          wait: 1000,
+        })
       );
       const [, setState, , { reset }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
@@ -326,13 +307,11 @@ describe("useDebouncedState", () => {
 
   describe("flush", () => {
     it("should flush the waiting state update", () => {
-      const t = renderHook(
-        () =>
-          useDebouncedState({
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedState({
+          init: "",
+          wait: 1000,
+        })
       );
       const [, setState, , { flush }] = t.result.current;
       let [state, , isWaiting] = t.result.current;

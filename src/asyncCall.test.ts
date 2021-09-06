@@ -1,6 +1,5 @@
 import { RejectFunc, ResolveFunc, triplet } from "@susisu/promise-utils";
 import { act, renderHook } from "@testing-library/react-hooks";
-import { StrictMode } from "react";
 import { UseDebouncedAsyncCallFuncOptions, useDebouncedAsyncCall } from "./asyncCall";
 
 describe("useDebouncedAsyncCall", () => {
@@ -35,14 +34,12 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should always return the identical functions", () => {
     const { func } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     const [, call1, , r1] = t.result.current;
 
@@ -56,14 +53,12 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should initialize the result with the given value", () => {
     const { func } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     const [res] = t.result.current;
     expect(res).toBe("");
@@ -72,14 +67,12 @@ describe("useDebouncedAsyncCall", () => {
   it("should initialize the result using the given function", () => {
     const { func } = createMockFunc();
     const init = jest.fn<string, []>(() => "");
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init,
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init,
+        wait: 1000,
+      })
     );
     expect(init).toHaveBeenCalled();
     const [res] = t.result.current;
@@ -88,14 +81,12 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should debounce function calls", async () => {
     const { func, resolves } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -156,15 +147,13 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should call the function on the leading edge of timeout if leading = true is specified", async () => {
     const { func, resolves } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+        leading: true,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -233,16 +222,14 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", async () => {
     const { func, resolves } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-          leading: true,
-          trailing: false,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+        leading: true,
+        trailing: false,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -303,15 +290,13 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should reset waiting state when leading = true and call is invoked only once", async () => {
     const { func, resolves } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-          leading: true,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+        leading: true,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -346,14 +331,12 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should cancel the previous pending function call if a next function call is invoked", async () => {
     const { func, resolves } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -417,14 +400,12 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should ignore rejection and go back to standby state if there is no waiting function call", async () => {
     const { func, rejects } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -459,14 +440,12 @@ describe("useDebouncedAsyncCall", () => {
 
   it("should ignore rejection and go back to waiting state if there is a waiting function call", async () => {
     const { func, resolves, rejects } = createMockFunc();
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -532,14 +511,12 @@ describe("useDebouncedAsyncCall", () => {
         return _func(args, options);
       }
     );
-    const t = renderHook(
-      () =>
-        useDebouncedAsyncCall({
-          func,
-          init: "",
-          wait: 1000,
-        }),
-      { wrapper: StrictMode }
+    const t = renderHook(() =>
+      useDebouncedAsyncCall({
+        func,
+        init: "",
+        wait: 1000,
+      })
     );
     expect(func).not.toHaveBeenCalled();
     [, call] = t.result.current;
@@ -593,14 +570,12 @@ describe("useDebouncedAsyncCall", () => {
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
       const { func } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { cancel }] = t.result.current;
@@ -635,14 +610,12 @@ describe("useDebouncedAsyncCall", () => {
 
     it("should cancel the pending function call", () => {
       const { func, resolves } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { cancel }] = t.result.current;
@@ -689,14 +662,12 @@ describe("useDebouncedAsyncCall", () => {
 
     it("should do nothing if there are no waiting or pending function calls", () => {
       const { func } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, , , { cancel }] = t.result.current;
@@ -717,14 +688,12 @@ describe("useDebouncedAsyncCall", () => {
   describe("reset", () => {
     it("should cancel the waiting function call and set the given value to the result", () => {
       const { func } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { reset }] = t.result.current;
@@ -759,14 +728,12 @@ describe("useDebouncedAsyncCall", () => {
 
     it("should cancel the pending function call and set the given value to the result", () => {
       const { func, resolves } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { reset }] = t.result.current;
@@ -813,14 +780,12 @@ describe("useDebouncedAsyncCall", () => {
 
     it("should only set the given value to the result if there are no waiting or pending function calls", () => {
       const { func } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, , , { reset }] = t.result.current;
@@ -841,14 +806,12 @@ describe("useDebouncedAsyncCall", () => {
   describe("flush", () => {
     it("should flush the waiting function call", async () => {
       const { func, resolves } = createMockFunc();
-      const t = renderHook(
-        () =>
-          useDebouncedAsyncCall({
-            func,
-            init: "",
-            wait: 1000,
-          }),
-        { wrapper: StrictMode }
+      const t = renderHook(() =>
+        useDebouncedAsyncCall({
+          func,
+          init: "",
+          wait: 1000,
+        })
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { flush }] = t.result.current;
