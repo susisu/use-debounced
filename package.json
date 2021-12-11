@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@susisu/primitive-debounce": "^0.2.0",
-    "@susisu/promise-utils": "^0.1.0"
+    "@susisu/promise-utils": "^0.1.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0"

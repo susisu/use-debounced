@@ -578,10 +578,10 @@
   resolved "https://registry.yarnpkg.com/@susisu/primitive-debounce/-/primitive-debounce-0.2.0.tgz#58fbd37411c1a673a789c76c65546cfa65cfb2e6"
   integrity sha512-1uvPKgzJCLA54DYyGpFzRTGPgUzsfQ4ZzxahOXQlyCdDzDHkUe+UtYxJw8q64dEVd/04VelllIbXB1mp9GjXKw==
 
-"@susisu/promise-utils@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@susisu/promise-utils/-/promise-utils-0.1.0.tgz#cd01ba6dccf2f5acd9e07866f2d6d1a0b86e0cc0"
-  integrity sha512-A3meMF+9wKXRYYKVyx6f59WO6Q8XAv+mrV26SwnI3p+Vj2pqo82jojarVKow7ZVt2FBfgM6IwAdkSrwsYnv9rQ==
+"@susisu/promise-utils@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@susisu/promise-utils/-/promise-utils-0.1.1.tgz#7c762fa01da544b6e2b080301a29afeeca58e5eb"
+  integrity sha512-et9jr25fiD6pihm5ysqXRUB500UVxUysWGWS58SXTrSxQKOpFzHp3mwr642gegEA5QvBtH2duaImwBw7mdgnow==
 
 "@testing-library/react-hooks@^7.0.2":
   version "7.0.2"
