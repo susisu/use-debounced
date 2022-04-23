@@ -1,5 +1,5 @@
 import { Debounce } from "@susisu/primitive-debounce";
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 import { usePrimitiveDebounce } from "./primitive";
 
 describe("usePrimitiveDebounce", () => {

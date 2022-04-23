@@ -1,5 +1,5 @@
 import { RejectFunc, ResolveFunc, triplet } from "@susisu/promise-utils";
-import { act, renderHook } from "@testing-library/react-hooks";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { UseDebouncedAsyncCallFuncOptions, useDebouncedAsyncCall } from "./asyncCall";
 
 describe("useDebouncedAsyncCall", () => {
@@ -138,11 +138,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("BAZ");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("BAZ");
+      expect(isWaiting).toBe(false);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("BAZ");
-    expect(isWaiting).toBe(false);
   });
 
   it("should call the function on the leading edge of timeout if leading = true is specified", async () => {
@@ -180,11 +181,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("FOO");
+      expect(isWaiting).toBe(true);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("FOO");
-    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
@@ -213,11 +215,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("BAZ");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("BAZ");
+      expect(isWaiting).toBe(false);
+    });
     expect(func).toHaveBeenCalledTimes(2);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("BAZ");
-    expect(isWaiting).toBe(false);
   });
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", async () => {
@@ -256,11 +259,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("FOO");
+      expect(isWaiting).toBe(true);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("FOO");
-    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(500);
@@ -314,11 +318,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("FOO");
+      expect(isWaiting).toBe(true);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("FOO");
-    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -391,11 +396,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("BAR");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("BAR");
+      expect(isWaiting).toBe(false);
+    });
     expect(func).toHaveBeenCalledTimes(2);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("BAR");
-    expect(isWaiting).toBe(false);
   });
 
   it("should ignore rejection and go back to standby state if there is no waiting function call", async () => {
@@ -431,11 +437,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     rejects[0](new Error("test error"));
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(false);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("");
-    expect(isWaiting).toBe(false);
   });
 
   it("should ignore rejection and go back to waiting state if there is a waiting function call", async () => {
@@ -479,11 +486,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     rejects[0](new Error("test error"));
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("");
+      expect(isWaiting).toBe(true);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("");
-    expect(isWaiting).toBe(true);
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -495,11 +503,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("BAR");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("BAR");
+      expect(isWaiting).toBe(false);
+    });
     expect(func).toHaveBeenCalledTimes(2);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("BAR");
-    expect(isWaiting).toBe(false);
   });
 
   it("should be consistent if the debounced call is invoked in the function", async () => {
@@ -542,11 +551,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("FOO");
+      expect(isWaiting).toBe(true);
+    });
     expect(func).toHaveBeenCalledTimes(1);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("FOO");
-    expect(isWaiting).toBe(true);
 
     call = (_str: string): void => {};
 
@@ -560,11 +570,12 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("NYANCAT");
-    await t.waitForNextUpdate();
+    await waitFor(() => {
+      const [res, , isWaiting] = t.result.current;
+      expect(res).toBe("NYANCAT");
+      expect(isWaiting).toBe(false);
+    });
     expect(func).toHaveBeenCalledTimes(2);
-    [res, , isWaiting] = t.result.current;
-    expect(res).toBe("NYANCAT");
-    expect(isWaiting).toBe(false);
   });
 
   describe("cancel", () => {
@@ -837,11 +848,12 @@ describe("useDebouncedAsyncCall", () => {
       expect(isWaiting).toBe(true);
 
       resolves[0]("FOO");
-      await t.waitForNextUpdate();
+      await waitFor(() => {
+        const [res, , isWaiting] = t.result.current;
+        expect(res).toBe("FOO");
+        expect(isWaiting).toBe(false);
+      });
       expect(func).toHaveBeenCalledTimes(1);
-      [res, , isWaiting] = t.result.current;
-      expect(res).toBe("FOO");
-      expect(isWaiting).toBe(false);
     });
   });
 });
