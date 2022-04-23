@@ -1,4 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
+import { act } from "@testing-library/react";
+import { strictRenderHook } from "./__tests__/utils";
 import { useDebouncedCall } from "./call";
 
 describe("useDebouncedCall", () => {
@@ -13,7 +14,7 @@ describe("useDebouncedCall", () => {
 
   it("should always return the identical functions", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -32,7 +33,7 @@ describe("useDebouncedCall", () => {
 
   it("should initialize the result with the given value", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -46,7 +47,7 @@ describe("useDebouncedCall", () => {
   it("should initialize the result using the given function", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
     const init = jest.fn<string, []>(() => "");
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init,
@@ -60,7 +61,7 @@ describe("useDebouncedCall", () => {
 
   it("should debounce function calls", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -119,7 +120,7 @@ describe("useDebouncedCall", () => {
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -180,7 +181,7 @@ describe("useDebouncedCall", () => {
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -241,7 +242,7 @@ describe("useDebouncedCall", () => {
 
   it("should reset waiting state when leading = true and call is invoked only once", () => {
     const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -279,7 +280,7 @@ describe("useDebouncedCall", () => {
       call("nyancat");
       return str.toUpperCase();
     });
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
         init: "",
@@ -324,7 +325,7 @@ describe("useDebouncedCall", () => {
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
       const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-      const t = renderHook(() =>
+      const t = strictRenderHook(() =>
         useDebouncedCall({
           func,
           init: "",
@@ -366,7 +367,7 @@ describe("useDebouncedCall", () => {
   describe("reset", () => {
     it("should cancel the waiting function call and set the given value to the result", () => {
       const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-      const t = renderHook(() =>
+      const t = strictRenderHook(() =>
         useDebouncedCall({
           func,
           init: "",
@@ -408,7 +409,7 @@ describe("useDebouncedCall", () => {
   describe("flush", () => {
     it("should flush the waiting function call", () => {
       const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-      const t = renderHook(() =>
+      const t = strictRenderHook(() =>
         useDebouncedCall({
           func,
           init: "",

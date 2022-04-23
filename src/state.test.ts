@@ -1,4 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
+import { act } from "@testing-library/react";
+import { strictRenderHook } from "./__tests__/utils";
 import { useDebouncedState } from "./state";
 
 describe("useDebouncedState", () => {
@@ -12,7 +13,7 @@ describe("useDebouncedState", () => {
   });
 
   it("should always return the identical functions", () => {
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init: "",
         wait: 1000,
@@ -29,7 +30,7 @@ describe("useDebouncedState", () => {
   });
 
   it("should initialize the state with the given value", () => {
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init: "",
         wait: 1000,
@@ -41,7 +42,7 @@ describe("useDebouncedState", () => {
 
   it("should initialize the state using the given function", () => {
     const init = jest.fn<string, []>(() => "");
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init,
         wait: 1000,
@@ -53,7 +54,7 @@ describe("useDebouncedState", () => {
   });
 
   it("should debounce state update", () => {
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init: "",
         wait: 1000,
@@ -103,7 +104,7 @@ describe("useDebouncedState", () => {
   });
 
   it("should update the state on the leading edge of timeout if leading = true is specified", () => {
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init: "",
         wait: 1000,
@@ -154,7 +155,7 @@ describe("useDebouncedState", () => {
   });
 
   it("should not update the state on the trailing edge of timeout if trailing = false is specified", () => {
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init: "",
         wait: 1000,
@@ -206,7 +207,7 @@ describe("useDebouncedState", () => {
   });
 
   it("should correctly reset waiting state when leading = true and setState is invoked only once", () => {
-    const t = renderHook(() =>
+    const t = strictRenderHook(() =>
       useDebouncedState({
         init: "",
         wait: 1000,
@@ -235,7 +236,7 @@ describe("useDebouncedState", () => {
 
   describe("cancel", () => {
     it("should cancel the waiting state update", () => {
-      const t = renderHook(() =>
+      const t = strictRenderHook(() =>
         useDebouncedState({
           init: "",
           wait: 1000,
@@ -271,7 +272,7 @@ describe("useDebouncedState", () => {
 
   describe("reset", () => {
     it("should cancel the waiting state update and set the given value to the state", () => {
-      const t = renderHook(() =>
+      const t = strictRenderHook(() =>
         useDebouncedState({
           init: "",
           wait: 1000,
@@ -307,7 +308,7 @@ describe("useDebouncedState", () => {
 
   describe("flush", () => {
     it("should flush the waiting state update", () => {
-      const t = renderHook(() =>
+      const t = strictRenderHook(() =>
         useDebouncedState({
           init: "",
           wait: 1000,
