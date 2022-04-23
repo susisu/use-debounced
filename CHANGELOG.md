@@ -1,3 +1,7 @@
+## 0.4.1 (2022-04-23)
+- Add support for React 18
+- Include source files in distribution (for source maps)
+
 ## 0.4.0 (2021-09-07)
 ### Breaking changes
 - `func` of `useDebouncedCall`, `useDebouncedAsyncCall`, and `useDebuncedFunc` receives arguments as a single array.

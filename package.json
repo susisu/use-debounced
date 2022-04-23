@@ -1,6 +1,6 @@
 {
   "name": "@susisu/use-debounced",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Debounced React Hooks",
   "repository": "https://github.com/susisu/use-debounced.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
