@@ -6,14 +6,14 @@ module.exports = {
     {
       files: ["*.{ts,tsx}"],
       extends: [
-        "@susisu/eslint-config/preset/ts-types",
+        "@susisu/eslint-config/preset/ts",
         "plugin:eslint-comments/recommended",
         "plugin:import/typescript",
         "plugin:react-hooks/recommended",
         "prettier",
       ],
       parserOptions: {
-        ecmaVersion: 2019,
+        ecmaVersion: 2020,
         sourceType: "module",
         project: "./tsconfig.json",
       },
@@ -42,12 +42,12 @@ module.exports = {
     {
       files: ["*.js"],
       extends: [
-        "@susisu/eslint-config/preset/es",
+        "@susisu/eslint-config/preset/js",
         "plugin:eslint-comments/recommended",
         "prettier",
       ],
       parserOptions: {
-        ecmaVersion: 2019,
+        ecmaVersion: 2020,
         sourceType: "script",
       },
       env: {
