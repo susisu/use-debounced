@@ -4,17 +4,16 @@ import { strictRenderHook } from "./__tests__/utils";
 import { UseDebouncedAsyncCallFuncOptions, useDebouncedAsyncCall } from "./asyncCall";
 
 describe("useDebouncedAsyncCall", () => {
-  let spy: jest.SpyInstance;
+  const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
 
   beforeEach(() => {
     jest.useFakeTimers();
-    spy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     jest.clearAllTimers();
     jest.useRealTimers();
-    spy.mockRestore();
+    consoleError.mockReset();
   });
 
   const createMockFunc = (): {
