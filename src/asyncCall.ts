@@ -264,7 +264,7 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
     debounce.trigger(...args);
   });
 
-  const cancelRef = useRef(() => {
+  const cancelRef = useRef((): void => {
     debounce.cancel();
   });
 
@@ -273,7 +273,7 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
     dispatch({ type: "reset", result });
   });
 
-  const flushRef = useRef(() => {
+  const flushRef = useRef((): void => {
     debounce.flush();
   });
 

@@ -51,11 +51,11 @@ export function useDebouncedState<T>(
     trailing: options.trailing,
   });
 
-  const triggerRef = useRef((state: T) => {
+  const triggerRef = useRef((state: T): void => {
     debounce.trigger(state);
   });
 
-  const cancelRef = useRef(() => {
+  const cancelRef = useRef((): void => {
     debounce.cancel();
   });
 
@@ -64,7 +64,7 @@ export function useDebouncedState<T>(
     setState(() => state);
   });
 
-  const flushRef = useRef(() => {
+  const flushRef = useRef((): void => {
     debounce.flush();
   });
 

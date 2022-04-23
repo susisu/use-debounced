@@ -43,15 +43,15 @@ export function useDebouncedFunc<T extends readonly unknown[]>(
     trailing: options.trailing,
   });
 
-  const triggerRef = useRef((...args: T) => {
+  const triggerRef = useRef((...args: T): void => {
     debounce.trigger(...args);
   });
 
-  const cancelRef = useRef(() => {
+  const cancelRef = useRef((): void => {
     debounce.cancel();
   });
 
-  const flushRef = useRef(() => {
+  const flushRef = useRef((): void => {
     debounce.flush();
   });
 
