@@ -46,12 +46,5 @@ export function usePrimitiveDebounce<T extends readonly unknown[]>(
       })
   );
 
-  useEffect(
-    () => () => {
-      debounce.cancel();
-    },
-    [debounce]
-  );
-
   return debounce;
 }
