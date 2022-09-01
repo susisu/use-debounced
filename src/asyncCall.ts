@@ -50,6 +50,8 @@ type Action<R> =
 
 const initializer = <R>(init: R | (() => R)): State<R> => {
   if (typeof init === "function") {
+    // It's unsafe but common practice in React (e.g. useState).
+    // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
     const initFunc = init as () => R;
     return { type: "standby", result: initFunc() };
   } else {
