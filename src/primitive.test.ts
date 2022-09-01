@@ -69,4 +69,17 @@ describe("usePrimitiveDebounce", () => {
     expect(callbacks1.cancelCallback).toHaveBeenCalledTimes(callCount1);
     expect(callbacks2.cancelCallback).toHaveBeenCalledTimes(callCount2 + 1);
   });
+
+  it("should cancel when the component is unmounted", () => {
+    const callbacks = createMockCallbacks();
+    const t = strictRenderHook(() =>
+      usePrimitiveDebounce({
+        ...callbacks,
+        wait: 1000,
+      })
+    );
+    const callCount = callbacks.cancelCallback.mock.calls.length;
+    t.unmount();
+    expect(callbacks.cancelCallback).toHaveBeenCalledTimes(callCount + 1);
+  });
 });
