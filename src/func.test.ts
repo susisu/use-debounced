@@ -17,7 +17,7 @@ describe("useDebouncedFunc", () => {
       useDebouncedFunc({
         func,
         wait: 1000,
-      })
+      }),
     );
     const [call1, r1] = t.result.current;
 
@@ -34,7 +34,7 @@ describe("useDebouncedFunc", () => {
       useDebouncedFunc({
         func,
         wait: 1000,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [call] = t.result.current;
@@ -65,7 +65,7 @@ describe("useDebouncedFunc", () => {
         func,
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [call] = t.result.current;
@@ -98,7 +98,7 @@ describe("useDebouncedFunc", () => {
         wait: 1000,
         leading: true,
         trailing: false,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [call] = t.result.current;
@@ -129,7 +129,7 @@ describe("useDebouncedFunc", () => {
         useDebouncedFunc({
           func,
           wait: 1000,
-        })
+        }),
       );
       expect(func).not.toHaveBeenCalled();
       const [call, { cancel }] = t.result.current;
@@ -152,7 +152,7 @@ describe("useDebouncedFunc", () => {
         useDebouncedFunc({
           func,
           wait: 1000,
-        })
+        }),
       );
       expect(func).not.toHaveBeenCalled();
       const [call, { flush }] = t.result.current;

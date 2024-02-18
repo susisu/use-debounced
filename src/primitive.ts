@@ -12,7 +12,7 @@ export type UseDebouncedPrimOptions<T> = Readonly<{
 }>;
 
 export function usePrimitiveDebounce<T extends readonly unknown[]>(
-  options: UseDebouncedPrimOptions<T>
+  options: UseDebouncedPrimOptions<T>,
 ): Debounce<T> {
   const leadingCallbackRef = useRef(options.leadingCallback);
   const trailingCallbackRef = useRef(options.trailingCallback);
@@ -43,14 +43,14 @@ export function usePrimitiveDebounce<T extends readonly unknown[]>(
         maxWait: options.maxWait,
         leading: options.leading ?? false,
         trailing: options.trailing ?? true,
-      })
+      }),
   );
 
   useEffect(
     () => () => {
       debounce.cancel();
     },
-    [debounce]
+    [debounce],
   );
 
   return debounce;

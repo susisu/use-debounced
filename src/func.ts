@@ -14,14 +14,14 @@ export type UseDebouncedFuncResult<T extends readonly unknown[]> = [
   methods: {
     cancel: () => void;
     flush: () => void;
-  }
+  },
 ];
 
 /**
  * useDebouncedFunc creates a debounced version of a function.
  */
 export function useDebouncedFunc<T extends readonly unknown[]>(
-  options: UseDebouncedFuncOptions<T>
+  options: UseDebouncedFuncOptions<T>,
 ): UseDebouncedFuncResult<T> {
   const callback = useCallback(
     (args: T, active: boolean): void => {
@@ -30,7 +30,7 @@ export function useDebouncedFunc<T extends readonly unknown[]>(
         func(args);
       }
     },
-    [options.func]
+    [options.func],
   );
 
   const debounce = usePrimitiveDebounce<T>({

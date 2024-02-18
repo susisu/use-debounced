@@ -24,7 +24,7 @@ export type UseDebouncedAsyncCallResult<T extends readonly unknown[], R> = [
     cancel: () => void;
     reset: (result: R) => void;
     flush: () => void;
-  }
+  },
 ];
 
 /**
@@ -90,8 +90,8 @@ const handleLeadingCall = <R>(state: State<R>, skip: boolean): State<R> => {
 const handleTrailingCall = <R>(state: State<R>, skip: boolean): State<R> => {
   switch (state.type) {
     case "waiting":
-      return skip
-        ? { type: "standby", result: state.result }
+      return skip ?
+          { type: "standby", result: state.result }
         : { type: "pending", result: state.result };
     case "waiting-pending":
       return { type: "pending", result: state.result };
@@ -185,12 +185,12 @@ const reducer = <R>(state: State<R>, action: Action<R>): State<R> => {
  * the state.
  */
 export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
-  options: UseDebouncedAsyncCallOptions<T, R>
+  options: UseDebouncedAsyncCallOptions<T, R>,
 ): UseDebouncedAsyncCallResult<T, R> {
   const [state, dispatch] = useReducer<Reducer<State<R>, Action<R>>, R | (() => R)>(
     reducer,
     options.init,
-    initializer
+    initializer,
   );
 
   const cancelAsyncCallRef = useRef<(() => void) | undefined>(undefined);
@@ -205,23 +205,23 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
       const controller = new AbortController();
       const [cancelPromise] = attachActions(
         func(args, { signal: controller.signal }),
-        result => {
+        (result) => {
           cancelAsyncCallRef.current = undefined;
           dispatch({ type: "fulfill", result });
         },
-        err => {
+        (err) => {
           // eslint-disable-next-line no-console
           console.error(err);
           cancelAsyncCallRef.current = undefined;
           dispatch({ type: "reject" });
-        }
+        },
       );
       cancelAsyncCallRef.current = () => {
         cancelPromise();
         controller.abort();
       };
     },
-    [options.func]
+    [options.func],
   );
 
   const debounce = usePrimitiveDebounce<T>({
@@ -235,7 +235,7 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
           dispatch({ type: "leadingCall", skip: true });
         }
       },
-      [call]
+      [call],
     ),
     trailingCallback: useCallback(
       (args, active) => {
@@ -246,7 +246,7 @@ export function useDebouncedAsyncCall<T extends readonly unknown[], R>(
           dispatch({ type: "trailingCall", skip: true });
         }
       },
-      [call]
+      [call],
     ),
     cancelCallback: useCallback(() => {
       if (cancelAsyncCallRef.current) {

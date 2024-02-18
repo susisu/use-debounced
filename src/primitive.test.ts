@@ -28,7 +28,7 @@ describe("usePrimitiveDebounce", () => {
       usePrimitiveDebounce({
         ...callbacks,
         wait: 1000,
-      })
+      }),
     );
     expect(t.result.current).toBeInstanceOf(Debounce);
     const debounce = t.result.current;
@@ -40,12 +40,12 @@ describe("usePrimitiveDebounce", () => {
   it("should replace callbacks when they are updated", () => {
     const callbacks1 = createMockCallbacks();
     const t = strictRenderHook(
-      callbacks =>
+      (callbacks) =>
         usePrimitiveDebounce({
           ...callbacks,
           wait: 1000,
         }),
-      { initialProps: callbacks1 }
+      { initialProps: callbacks1 },
     );
 
     const callbacks2 = createMockCallbacks();
@@ -76,7 +76,7 @@ describe("usePrimitiveDebounce", () => {
       usePrimitiveDebounce({
         ...callbacks,
         wait: 1000,
-      })
+      }),
     );
     const callCount = callbacks.cancelCallback.mock.calls.length;
     t.unmount();

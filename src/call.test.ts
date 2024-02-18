@@ -19,7 +19,7 @@ describe("useDebouncedCall", () => {
         func,
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [, call1, , r1] = t.result.current;
 
@@ -38,7 +38,7 @@ describe("useDebouncedCall", () => {
         func,
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [res] = t.result.current;
     expect(res).toBe("");
@@ -52,7 +52,7 @@ describe("useDebouncedCall", () => {
         func,
         init,
         wait: 1000,
-      })
+      }),
     );
     expect(init).toHaveBeenCalled();
     const [res] = t.result.current;
@@ -66,7 +66,7 @@ describe("useDebouncedCall", () => {
         func,
         init: "",
         wait: 1000,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -126,7 +126,7 @@ describe("useDebouncedCall", () => {
         init: "",
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -188,7 +188,7 @@ describe("useDebouncedCall", () => {
         wait: 1000,
         leading: true,
         trailing: false,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -248,7 +248,7 @@ describe("useDebouncedCall", () => {
         init: "",
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     const [, call] = t.result.current;
@@ -285,7 +285,7 @@ describe("useDebouncedCall", () => {
         func,
         init: "",
         wait: 1000,
-      })
+      }),
     );
     expect(func).not.toHaveBeenCalled();
     [, call] = t.result.current;
@@ -330,7 +330,7 @@ describe("useDebouncedCall", () => {
           func,
           init: "",
           wait: 1000,
-        })
+        }),
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { cancel }] = t.result.current;
@@ -372,7 +372,7 @@ describe("useDebouncedCall", () => {
           func,
           init: "",
           wait: 1000,
-        })
+        }),
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { reset }] = t.result.current;
@@ -414,7 +414,7 @@ describe("useDebouncedCall", () => {
           func,
           init: "",
           wait: 1000,
-        })
+        }),
       );
       expect(func).not.toHaveBeenCalled();
       const [, call, , { flush }] = t.result.current;

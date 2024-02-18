@@ -17,7 +17,7 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [, setState1, , r1] = t.result.current;
 
@@ -34,7 +34,7 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [state] = t.result.current;
     expect(state).toBe("");
@@ -46,7 +46,7 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init,
         wait: 1000,
-      })
+      }),
     );
     const [state] = t.result.current;
     expect(init).toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -109,7 +109,7 @@ describe("useDebouncedState", () => {
         init: "",
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -161,7 +161,7 @@ describe("useDebouncedState", () => {
         wait: 1000,
         leading: true,
         trailing: false,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -212,7 +212,7 @@ describe("useDebouncedState", () => {
         init: "",
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -240,7 +240,7 @@ describe("useDebouncedState", () => {
         useDebouncedState({
           init: "",
           wait: 1000,
-        })
+        }),
       );
       const [, setState, , { cancel }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
@@ -276,7 +276,7 @@ describe("useDebouncedState", () => {
         useDebouncedState({
           init: "",
           wait: 1000,
-        })
+        }),
       );
       const [, setState, , { reset }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
@@ -312,7 +312,7 @@ describe("useDebouncedState", () => {
         useDebouncedState({
           init: "",
           wait: 1000,
-        })
+        }),
       );
       const [, setState, , { flush }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
