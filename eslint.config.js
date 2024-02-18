@@ -1,21 +1,13 @@
-"use strict";
+import { config } from "@susisu/eslint-config";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
+import vitestPlugin from "eslint-plugin-vitest";
+import globals from "globals";
 
-const { config } = require("@susisu/eslint-config");
-const reactHooksPlugin = require("eslint-plugin-react-hooks");
-const vitestPlugin = require("eslint-plugin-vitest");
-const globals = require("globals");
-
-module.exports = config({}, [
+export default config({}, [
   {
     plugins: {
       "react-hooks": reactHooksPlugin,
       vitest: vitestPlugin,
-    },
-  },
-  {
-    files: ["*.js"],
-    languageOptions: {
-      sourceType: "commonjs",
     },
   },
   {
