@@ -2,7 +2,7 @@ import type { Mock } from "vitest";
 import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import type { RejectFunc, ResolveFunc } from "@susisu/promise-utils";
 import { triplet } from "@susisu/promise-utils";
-import { act, waitFor } from "@testing-library/react";
+import { act } from "@testing-library/react";
 import { strictRenderHook } from "./__tests__/utils";
 import type { UseDebouncedAsyncCallFuncOptions } from "./asyncCall";
 import { useDebouncedAsyncCall } from "./asyncCall";
@@ -142,7 +142,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("BAZ");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("BAZ");
       expect(isWaiting).toBe(false);
@@ -185,7 +185,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("FOO");
       expect(isWaiting).toBe(true);
@@ -219,7 +219,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("BAZ");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("BAZ");
       expect(isWaiting).toBe(false);
@@ -263,7 +263,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("FOO");
       expect(isWaiting).toBe(true);
@@ -322,7 +322,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("FOO");
       expect(isWaiting).toBe(true);
@@ -400,7 +400,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("BAR");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("BAR");
       expect(isWaiting).toBe(false);
@@ -441,7 +441,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     rejects[0](new Error("test error"));
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(false);
@@ -490,7 +490,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     rejects[0](new Error("test error"));
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("");
       expect(isWaiting).toBe(true);
@@ -507,7 +507,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("BAR");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("BAR");
       expect(isWaiting).toBe(false);
@@ -555,7 +555,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[0]("FOO");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("FOO");
       expect(isWaiting).toBe(true);
@@ -574,7 +574,7 @@ describe("useDebouncedAsyncCall", () => {
     expect(isWaiting).toBe(true);
 
     resolves[1]("NYANCAT");
-    await waitFor(() => {
+    await vi.waitFor(() => {
       const [res, , isWaiting] = t.result.current;
       expect(res).toBe("NYANCAT");
       expect(isWaiting).toBe(false);
@@ -852,7 +852,7 @@ describe("useDebouncedAsyncCall", () => {
       expect(isWaiting).toBe(true);
 
       resolves[0]("FOO");
-      await waitFor(() => {
+      await vi.waitFor(() => {
         const [res, , isWaiting] = t.result.current;
         expect(res).toBe("FOO");
         expect(isWaiting).toBe(false);
