@@ -1,15 +1,16 @@
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import { act } from "@testing-library/react";
 import { strictRenderHook } from "./__tests__/utils";
 import { useDebouncedState } from "./state";
 
 describe("useDebouncedState", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   it("should always return the identical functions", () => {
@@ -17,7 +18,7 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [, setState1, , r1] = t.result.current;
 
@@ -34,19 +35,19 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [state] = t.result.current;
     expect(state).toBe("");
   });
 
   it("should initialize the state using the given function", () => {
-    const init = jest.fn<string, []>(() => "");
+    const init = vi.fn<[], string>(() => "");
     const t = strictRenderHook(() =>
       useDebouncedState({
         init,
         wait: 1000,
-      })
+      }),
     );
     const [state] = t.result.current;
     expect(init).toHaveBeenCalled();
@@ -58,7 +59,7 @@ describe("useDebouncedState", () => {
       useDebouncedState({
         init: "",
         wait: 1000,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -73,7 +74,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       setState("bar");
     });
     [state, , isWaiting] = t.result.current;
@@ -81,7 +82,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       setState("baz");
     });
     [state, , isWaiting] = t.result.current;
@@ -89,14 +90,14 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("");
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("baz");
@@ -109,7 +110,7 @@ describe("useDebouncedState", () => {
         init: "",
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -124,7 +125,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       setState("bar");
     });
     [state, , isWaiting] = t.result.current;
@@ -132,7 +133,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       setState("baz");
     });
     [state, , isWaiting] = t.result.current;
@@ -140,14 +141,14 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("foo");
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("baz");
@@ -161,7 +162,7 @@ describe("useDebouncedState", () => {
         wait: 1000,
         leading: true,
         trailing: false,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -176,7 +177,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       setState("bar");
     });
     [state, , isWaiting] = t.result.current;
@@ -184,7 +185,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       setState("baz");
     });
     [state, , isWaiting] = t.result.current;
@@ -192,14 +193,14 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("foo");
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("foo");
@@ -212,7 +213,7 @@ describe("useDebouncedState", () => {
         init: "",
         wait: 1000,
         leading: true,
-      })
+      }),
     );
     const [, setState] = t.result.current;
     let [state, , isWaiting] = t.result.current;
@@ -227,7 +228,7 @@ describe("useDebouncedState", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
     [state, , isWaiting] = t.result.current;
     expect(state).toBe("foo");
@@ -240,7 +241,7 @@ describe("useDebouncedState", () => {
         useDebouncedState({
           init: "",
           wait: 1000,
-        })
+        }),
       );
       const [, setState, , { cancel }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
@@ -262,7 +263,7 @@ describe("useDebouncedState", () => {
       expect(isWaiting).toBe(false);
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
       [state, , isWaiting] = t.result.current;
       expect(state).toBe("");
@@ -276,7 +277,7 @@ describe("useDebouncedState", () => {
         useDebouncedState({
           init: "",
           wait: 1000,
-        })
+        }),
       );
       const [, setState, , { reset }] = t.result.current;
       let [state, , isWaiting] = t.result.current;
@@ -298,7 +299,7 @@ describe("useDebouncedState", () => {
       expect(isWaiting).toBe(false);
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
       [state, , isWaiting] = t.result.current;
       expect(state).toBe("RESET");
@@ -312,7 +313,7 @@ describe("useDebouncedState", () => {
         useDebouncedState({
           init: "",
           wait: 1000,
-        })
+        }),
       );
       const [, setState, , { flush }] = t.result.current;
       let [state, , isWaiting] = t.result.current;

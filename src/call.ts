@@ -18,7 +18,7 @@ export type UseDebouncedCallResult<T extends readonly unknown[], R> = [
     cancel: () => void;
     reset: (result: R) => void;
     flush: () => void;
-  }
+  },
 ];
 
 /**
@@ -26,7 +26,7 @@ export type UseDebouncedCallResult<T extends readonly unknown[], R> = [
  * When the given function is invoked after timeout, the result will be set to the state.
  */
 export function useDebouncedCall<T extends readonly unknown[], R>(
-  options: UseDebouncedCallOptions<T, R>
+  options: UseDebouncedCallOptions<T, R>,
 ): UseDebouncedCallResult<T, R> {
   const [result, setResult] = useState<R>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);
@@ -37,7 +37,7 @@ export function useDebouncedCall<T extends readonly unknown[], R>(
       const result = func(args);
       setResult(() => result);
     },
-    [options.func]
+    [options.func],
   );
 
   const debounce = usePrimitiveDebounce<T>({
@@ -48,7 +48,7 @@ export function useDebouncedCall<T extends readonly unknown[], R>(
           call(args);
         }
       },
-      [call]
+      [call],
     ),
     trailingCallback: useCallback(
       (args, active) => {
@@ -57,7 +57,7 @@ export function useDebouncedCall<T extends readonly unknown[], R>(
           call(args);
         }
       },
-      [call]
+      [call],
     ),
     cancelCallback: useCallback(() => {
       setIsWaiting(false);

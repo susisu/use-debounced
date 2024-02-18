@@ -17,14 +17,14 @@ export type UseDebouncedStateResult<T> = [
     cancel: () => void;
     reset: (state: T) => void;
     flush: () => void;
-  }
+  },
 ];
 
 /**
  * useDebouncedState is like the standard useState hook, but state updates are debounced.
  */
 export function useDebouncedState<T>(
-  options: UseDebouncedStateOptions<T>
+  options: UseDebouncedStateOptions<T>,
 ): UseDebouncedStateResult<T> {
   const [state, setState] = useState<T>(options.init);
   const [isWaiting, setIsWaiting] = useState(false);

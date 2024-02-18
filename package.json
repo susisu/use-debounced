@@ -5,7 +5,21 @@
   "repository": "https://github.com/susisu/use-debounced.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
   "license": "MIT",
+  "type": "module",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./lib/index.js",
+        "types": "./lib/index.d.ts"
+      },
+      "require": {
+        "default": "./lib/index.cjs",
+        "types": "./lib/index.d.cts"
+      }
+    }
+  },
   "files": [
     "lib",
     "src",
@@ -13,46 +27,40 @@
     "!src/**/__tests__"
   ],
   "scripts": {
-    "lint": "run-s lint:eslint lint:prettier",
-    "lint-fix": "run-s lint-fix:eslint lint-fix:prettier",
-    "lint:eslint": "eslint '*.js' src",
-    "lint-fix:eslint": "eslint --fix '*.js' src",
-    "lint:prettier": "prettier --check '*.js' src",
-    "lint-fix:prettier": "prettier --write '*.js' src",
+    "format": "prettier --write '*.js' src",
+    "format:check": "prettier --check '*.js' src",
+    "lint": "eslint --fix '*.js' src",
+    "lint:check": "eslint '*.js' src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "jest",
-    "build": "tsc --build tsconfig.build.json",
-    "clean": "run-s clean:build clean:rm",
-    "clean:build": "tsc --build tsconfig.build.json --clean",
-    "clean:rm": "rimraf lib",
-    "prepublishOnly": "run-s clean lint test build"
+    "test": "vitest run --coverage",
+    "test:dev": "vitest dev --coverage.enabled --coverage.reporter=text",
+    "build": "tsup",
+    "prepublishOnly": "run-s format:check lint:check typecheck test build"
   },
   "dependencies": {
-    "@susisu/primitive-debounce": "^0.3.0",
+    "@susisu/primitive-debounce": "^0.4.0",
     "@susisu/promise-utils": "^0.1.2"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@susisu/eslint-config": "^0.0.54",
-    "@testing-library/react": "^13.3.0",
-    "@types/jest": "^28.1.8",
-    "@types/react": "^18.0.18",
-    "eslint": "^8.23.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^27.0.1",
-    "eslint-plugin-jest-formatting": "^3.1.0",
+    "@susisu/eslint-config": "^0.0.79",
+    "@testing-library/react": "^14.2.1",
+    "@types/react": "^18.2.56",
+    "@vitest/coverage-v8": "^1.3.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "jest": "^28.1.3",
-    "jest-environment-jsdom": "^29.0.1",
+    "eslint-plugin-vitest": "^0.3.22",
+    "globals": "^14.0.0",
+    "jsdom": "^24.0.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
+    "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "ts-jest": "^28.0.8",
-    "typescript": "~4.8.2"
+    "tsup": "^8.0.2",
+    "typescript": "~5.3.3",
+    "vitest": "^1.3.0"
   }
 }
