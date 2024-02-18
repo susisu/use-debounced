@@ -2,16 +2,21 @@
 
 [![CI](https://github.com/susisu/use-debounced/workflows/CI/badge.svg)](https://github.com/susisu/use-debounced/actions?query=workflow%3ACI)
 
-Debounced React Hooks
+React Hooks for debouncing state updates and function calls
 
 ``` shell
+# npm
 npm i @susisu/use-debounced
-# or
+# yarn
 yarn add @susisu/use-debounced
+# pnpm
+pnpm add @susisu/use-debounced
 ```
 
 ## Usage
+
 ### `useDebouncedState`
+
 `useDebouncedState` is like the standard `useState` hook, but state updates are debounced.
 
 ``` tsx
@@ -41,6 +46,7 @@ const MyComponent: React.FC = () => {
 ```
 
 ### `useDebouncedCall`
+
 `useDebouncedCall` debounces synchronous function calls. When the given function is invoked after timeout, the result will be set to the state.
 
 ``` tsx
@@ -71,6 +77,7 @@ const MyComponent: React.FC = () => {
 ```
 
 ### `useDebouncedAsyncCall`
+
 `useDebouncedAsyncCall` debounces asynchronous function calls. When the given function is invoked after timeout and it is fulfilled, the result will be set to the state.
 
 ``` tsx
@@ -101,6 +108,7 @@ const MyComponent: React.FC = () => {
 ```
 
 ### `useDebouncedFunc`
+
 `useDebouncedFunc` is a simple hook to create a debounced version of a function.
 
 ``` tsx
