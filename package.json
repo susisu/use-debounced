@@ -35,7 +35,7 @@
     "test": "vitest run --coverage",
     "test:dev": "vitest dev --coverage.enabled --coverage.reporter=text",
     "build": "tsup",
-    "prepublishOnly": "run-s format:check lint:check test build"
+    "prepublishOnly": "run-s format:check lint:check typecheck test build"
   },
   "dependencies": {
     "@susisu/primitive-debounce": "^0.4.0",
