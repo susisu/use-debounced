@@ -1,5 +1,6 @@
 import { attachActions } from "@susisu/promise-utils";
-import { Reducer, useCallback, useReducer, useRef } from "react";
+import type { Reducer } from "react";
+import { useCallback, useReducer, useRef } from "react";
 import { usePrimitiveDebounce } from "./primitive";
 import { unreachable } from "./utils";
 

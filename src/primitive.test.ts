@@ -1,4 +1,5 @@
-import { Mock, vi, describe, it, beforeEach, afterEach, expect } from "vitest";
+import type { Mock } from "vitest";
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import { Debounce } from "@susisu/primitive-debounce";
 import { strictRenderHook } from "./__tests__/utils";
 import { usePrimitiveDebounce } from "./primitive";

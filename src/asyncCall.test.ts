@@ -1,8 +1,11 @@
-import { Mock, vi, describe, it, beforeEach, afterEach, expect } from "vitest";
-import { RejectFunc, ResolveFunc, triplet } from "@susisu/promise-utils";
+import type { Mock } from "vitest";
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
+import type { RejectFunc, ResolveFunc } from "@susisu/promise-utils";
+import { triplet } from "@susisu/promise-utils";
 import { act, waitFor } from "@testing-library/react";
 import { strictRenderHook } from "./__tests__/utils";
-import { UseDebouncedAsyncCallFuncOptions, useDebouncedAsyncCall } from "./asyncCall";
+import type { UseDebouncedAsyncCallFuncOptions } from "./asyncCall";
+import { useDebouncedAsyncCall } from "./asyncCall";
 
 describe("useDebouncedAsyncCall", () => {
   const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});

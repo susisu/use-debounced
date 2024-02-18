@@ -1,4 +1,4 @@
-import { Mock, vi, describe, it, beforeEach, afterEach, expect } from "vitest";
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import { act } from "@testing-library/react";
 import { strictRenderHook } from "./__tests__/utils";
 import { useDebouncedState } from "./state";
