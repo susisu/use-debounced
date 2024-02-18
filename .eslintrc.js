@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  plugins: ["import", "react-hooks", "jest", "jest-formatting"],
+  plugins: ["import", "react-hooks"],
   overrides: [
     {
       files: ["*.{ts,tsx}"],
@@ -27,16 +27,6 @@ module.exports = {
         "import/no-default-export": "error",
         "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
         "import/order": ["error", { alphabetize: { order: "asc" } }],
-      },
-    },
-    {
-      files: ["*.{test,spec}.{ts,tsx}", "src/**/__tests__/**/*.{ts,tsx}"],
-      extends: ["plugin:jest/recommended", "plugin:jest-formatting/recommended"],
-      env: {
-        "jest/globals": true,
-      },
-      rules: {
-        "@typescript-eslint/no-floating-promises": "off",
       },
     },
     {

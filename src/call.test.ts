@@ -1,19 +1,20 @@
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import { act } from "@testing-library/react";
 import { strictRenderHook } from "./__tests__/utils";
 import { useDebouncedCall } from "./call";
 
 describe("useDebouncedCall", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   it("should always return the identical functions", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -32,7 +33,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should initialize the result with the given value", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -45,8 +46,8 @@ describe("useDebouncedCall", () => {
   });
 
   it("should initialize the result using the given function", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
-    const init = jest.fn<string, []>(() => "");
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
+    const init = vi.fn<[], string>(() => "");
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -60,7 +61,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should debounce function calls", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -83,7 +84,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       call("bar");
     });
     expect(func).not.toHaveBeenCalled();
@@ -92,7 +93,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       call("baz");
     });
     expect(func).not.toHaveBeenCalled();
@@ -101,7 +102,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     expect(func).not.toHaveBeenCalled();
     [res, , isWaiting] = t.result.current;
@@ -109,7 +110,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(1);
     expect(func).toHaveBeenLastCalledWith(["baz"]);
@@ -119,7 +120,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -144,7 +145,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       call("bar");
     });
     expect(func).toHaveBeenCalledTimes(1);
@@ -153,7 +154,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       call("baz");
     });
     expect(func).toHaveBeenCalledTimes(1);
@@ -162,7 +163,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(1);
     [res, , isWaiting] = t.result.current;
@@ -170,7 +171,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(2);
     expect(func).toHaveBeenLastCalledWith(["baz"]);
@@ -180,7 +181,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -206,7 +207,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       call("bar");
     });
     expect(func).toHaveBeenCalledTimes(1);
@@ -215,7 +216,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
       call("baz");
     });
     expect(func).toHaveBeenCalledTimes(1);
@@ -224,7 +225,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(1);
     [res, , isWaiting] = t.result.current;
@@ -232,7 +233,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      vi.advanceTimersByTime(500);
     });
     expect(func).toHaveBeenCalledTimes(1);
     [res, , isWaiting] = t.result.current;
@@ -241,7 +242,7 @@ describe("useDebouncedCall", () => {
   });
 
   it("should reset waiting state when leading = true and call is invoked only once", () => {
-    const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+    const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
     const t = strictRenderHook(() =>
       useDebouncedCall({
         func,
@@ -266,7 +267,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
     [res, , isWaiting] = t.result.current;
@@ -276,7 +277,7 @@ describe("useDebouncedCall", () => {
 
   it("should be consistent if the debounced call is invoked in the function", () => {
     let call = (_str: string): void => {};
-    const func = jest.fn<string, [[string]]>(([str]) => {
+    const func = vi.fn<[[string]], string>(([str]) => {
       call("nyancat");
       return str.toUpperCase();
     });
@@ -302,7 +303,7 @@ describe("useDebouncedCall", () => {
     expect(isWaiting).toBe(true);
 
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(1);
     expect(func).toHaveBeenLastCalledWith(["foo"]);
@@ -313,7 +314,7 @@ describe("useDebouncedCall", () => {
     call = (_str: string): void => {};
 
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
     expect(func).toHaveBeenCalledTimes(2);
     expect(func).toHaveBeenLastCalledWith(["nyancat"]);
@@ -324,7 +325,7 @@ describe("useDebouncedCall", () => {
 
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
-      const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+      const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
       const t = strictRenderHook(() =>
         useDebouncedCall({
           func,
@@ -355,7 +356,7 @@ describe("useDebouncedCall", () => {
       expect(isWaiting).toBe(false);
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
       expect(func).not.toHaveBeenCalled();
       [res, , isWaiting] = t.result.current;
@@ -366,7 +367,7 @@ describe("useDebouncedCall", () => {
 
   describe("reset", () => {
     it("should cancel the waiting function call and set the given value to the result", () => {
-      const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+      const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
       const t = strictRenderHook(() =>
         useDebouncedCall({
           func,
@@ -397,7 +398,7 @@ describe("useDebouncedCall", () => {
       expect(isWaiting).toBe(false);
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
       expect(func).not.toHaveBeenCalled();
       [res, , isWaiting] = t.result.current;
@@ -408,7 +409,7 @@ describe("useDebouncedCall", () => {
 
   describe("flush", () => {
     it("should flush the waiting function call", () => {
-      const func = jest.fn<string, [[string]]>(([str]) => str.toUpperCase());
+      const func = vi.fn<[[string]], string>(([str]) => str.toUpperCase());
       const t = strictRenderHook(() =>
         useDebouncedCall({
           func,

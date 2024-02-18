@@ -1,18 +1,19 @@
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import { strictRenderHook } from "./__tests__/utils";
 import { useDebouncedFunc } from "./func";
 
 describe("useDebouncedFunc", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   it("should always return the identical functions", () => {
-    const func = jest.fn<void, [[string]]>(() => {});
+    const func = vi.fn<[[string]], void>(() => {});
     const t = strictRenderHook(() =>
       useDebouncedFunc({
         func,
@@ -29,7 +30,7 @@ describe("useDebouncedFunc", () => {
   });
 
   it("should debounce function calls", () => {
-    const func = jest.fn<void, [[string]]>(() => {});
+    const func = vi.fn<[[string]], void>(() => {});
     const t = strictRenderHook(() =>
       useDebouncedFunc({
         func,
@@ -42,24 +43,24 @@ describe("useDebouncedFunc", () => {
     call("foo");
     expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     call("bar");
     expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     call("baz");
     expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(func).not.toHaveBeenCalled();
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
     expect(func).toHaveBeenLastCalledWith(["baz"]);
   });
 
   it("should call the function on the leading edge of timeout if leading = true is specified", () => {
-    const func = jest.fn<void, [[string]]>(() => {});
+    const func = vi.fn<[[string]], void>(() => {});
     const t = strictRenderHook(() =>
       useDebouncedFunc({
         func,
@@ -74,24 +75,24 @@ describe("useDebouncedFunc", () => {
     expect(func).toHaveBeenCalledTimes(1);
     expect(func).toHaveBeenLastCalledWith(["foo"]);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     call("bar");
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     call("baz");
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(2);
     expect(func).toHaveBeenLastCalledWith(["baz"]);
   });
 
   it("should not call the function on the trailing edge of timeout if trailing = false is specified", () => {
-    const func = jest.fn<void, [[string]]>(() => {});
+    const func = vi.fn<[[string]], void>(() => {});
     const t = strictRenderHook(() =>
       useDebouncedFunc({
         func,
@@ -107,24 +108,24 @@ describe("useDebouncedFunc", () => {
     expect(func).toHaveBeenCalledTimes(1);
     expect(func).toHaveBeenLastCalledWith(["foo"]);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     call("bar");
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     call("baz");
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersByTime(500);
+    vi.advanceTimersByTime(500);
     expect(func).toHaveBeenCalledTimes(1);
   });
 
   describe("cancel", () => {
     it("should cancel the waiting function call", () => {
-      const func = jest.fn<void, [[string]]>(() => {});
+      const func = vi.fn<[[string]], void>(() => {});
       const t = strictRenderHook(() =>
         useDebouncedFunc({
           func,
@@ -140,14 +141,14 @@ describe("useDebouncedFunc", () => {
       cancel();
       expect(func).not.toHaveBeenCalled();
 
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       expect(func).not.toHaveBeenCalled();
     });
   });
 
   describe("flush", () => {
     it("should flush the waiting function call", () => {
-      const func = jest.fn<void, [[string]]>(() => {});
+      const func = vi.fn<[[string]], void>(() => {});
       const t = strictRenderHook(() =>
         useDebouncedFunc({
           func,
