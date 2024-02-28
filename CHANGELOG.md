@@ -1,3 +1,7 @@
+## 0.5.1 (2024-02-29)
+
+- Update dependencies
+
 ## 0.5.0 (2024-02-18)
 
 - The package is now ESM/CJS dual
